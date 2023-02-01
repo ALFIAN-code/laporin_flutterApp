@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "643979588576",
+    "project_id": "laporin-89b57",
+    "storage_bucket": "laporin-89b57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643979588576:android:f70571a33888747e317185",
+        "android_client_info": {
+          "package_name": "com.example.lapor_in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643979588576-ltbf8ln4flp3hdvrcudr60d9d8kmh9b1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZe1OoPYWOUqZqUi9i2EVhpxb2XU5EWN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643979588576-ltbf8ln4flp3hdvrcudr60d9d8kmh9b1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "643979588576-m8c43fhaehur58m2go7ao706nbcdi4oq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.laporIn"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643979588576:android:059c2b81db37f7c2317185",
+        "android_client_info": {
+          "package_name": "com.example.laporin_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643979588576-ltbf8ln4flp3hdvrcudr60d9d8kmh9b1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZe1OoPYWOUqZqUi9i2EVhpxb2XU5EWN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643979588576-ltbf8ln4flp3hdvrcudr60d9d8kmh9b1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "643979588576-m8c43fhaehur58m2go7ao706nbcdi4oq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.laporIn"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
