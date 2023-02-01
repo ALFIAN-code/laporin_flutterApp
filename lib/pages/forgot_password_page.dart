@@ -8,7 +8,7 @@ import '../component/my_button.dart';
 import '../component/text_field.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key});
 
   static String routesName = '/forgotPassword';
 
@@ -19,28 +19,28 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailControler = TextEditingController();
 
-  bool canResentEmail = false;
+  bool canResentEmail = true;
 
   Future resetPassword() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const CircularProgressIndicator(
-          color: Color(0xffFF8515),
-        );
-      },
-    );
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _emailControler.text.trim());
+
+      // Navigator.pop(context);
+      errorDialog(
+          title: 'password reset email sent',
+          content:
+              'try check your email, then click link to reset your password',
+          context: context);
 
       setState(() => canResentEmail = false);
       await Future.delayed(const Duration(seconds: 60));
       setState(() => canResentEmail = true);
 
       // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+
     } on FirebaseAuthException catch (e) {
+      // Navigator.pop(context);
       errorDialog(
           title: e.code, content: e.message.toString(), context: context);
     }
@@ -58,10 +58,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark));
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
