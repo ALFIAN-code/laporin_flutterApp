@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/error_dialog.dart';
 import 'package:lapor_in/component/my_button.dart';
+import 'package:lapor_in/component/snackbar.dart';
 import 'package:lapor_in/pages/home_page.dart';
 import 'package:lapor_in/style.dart';
 
@@ -59,11 +60,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       await Future.delayed(const Duration(seconds: 60));
       setState(() => canResentEmail = true);
     } catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(title: Text(e.toString()));
-          });
+      utils.showSnackBar(e.toString());
     }
   }
 
