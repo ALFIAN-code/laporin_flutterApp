@@ -16,6 +16,10 @@ class AuthPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return const EmailVerification();
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text('something went wrong'),
+              );
             } else {
               return LoginOrRegister();
             }

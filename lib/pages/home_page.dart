@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lapor_in/Services/auth_service.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -7,6 +8,7 @@ class HomePage extends StatelessWidget {
   static String routesName = '/homepage';
 
   void userSignOut() {
+    AuthService().googleLogout();
     FirebaseAuth.instance.signOut();
   }
 

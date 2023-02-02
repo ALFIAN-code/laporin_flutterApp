@@ -19,6 +19,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  var navigatorkey = GlobalKey<NavigatorState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   // final TextEditingController _confirmPasswordController =
@@ -44,9 +45,11 @@ class _RegisterPageState extends State<RegisterPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
       // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      navigatorkey.currentState!.pop();
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      navigatorkey.currentState!.pop();
 
       if (e.code == 'email-already-in-use') {
         errorDialog(

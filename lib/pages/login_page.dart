@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lapor_in/Services/auth_service.dart';
 import 'package:lapor_in/component/my_button.dart';
 import 'package:lapor_in/component/square_tile.dart';
 import 'package:lapor_in/component/text_field.dart';
@@ -22,8 +23,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
+  var navigatorkey = GlobalKey<NavigatorState>();
 
   bool _hidePassword = true;
   // final Key _emailFormKey = GlobalKey<FormState>();
@@ -34,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return const Center(
-            child: CircularProgressIndicator(
+            child: RefreshProgressIndicator(
               color: Color(0xff8CCD00),
             ),
           );
@@ -44,9 +45,12 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
       // ignore: use_build_context_synchronously
+      // navigatorkey.currentState!.pop();
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
+      // navigatorkey.currentState!.pop();
       if (e.code == 'user-not-found') {
         errorDialog(
             title: 'user not found',
@@ -73,11 +77,18 @@ class _LoginPageState extends State<LoginPage> {
     var deviceHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Color(0xffADFAC2),
-        statusBarIconBrightness: Brightness.dark));
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //     statusBarColor: Color(0xffADFAC2),
+    //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(0),
+          child: AppBar(
+            elevation: 0.0,
+            systemOverlayStyle:
+                const SystemUiOverlayStyle(statusBarColor: Color(0xffADFAC2)),
+          )),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
@@ -223,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 //google & facebook icon
                 SizedBox(
-                  height: deviceHeight * 0.01,
+                  height: deviceHeight * 0.02,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -231,18 +242,9 @@ class _LoginPageState extends State<LoginPage> {
                     SquareTile(
                       imagePath: 'lib/images/google.png',
                       onTap: () {
-                        print('tap tap tap');
+                        AuthService().signInWithGoogle();
                       },
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    SquareTile(
-                      imagePath: 'lib/images/facebook.png',
-                      onTap: () {
-                        print('tap tap tap');
-                      },
-                    )
                   ],
                 )
               ],
