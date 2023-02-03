@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lapor_in/component/snackbar.dart';
 import 'package:lapor_in/pages/forgot_password_page.dart';
+import 'package:lapor_in/pages/login_page.dart';
+import 'package:lapor_in/pages/register_page.dart';
 import '../pages/auth_page.dart';
 import '../pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
       routes: {
         HomePage.routesName: (context) => HomePage(),
         AuthPage.routesName: (context) => const AuthPage(),
-        ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage()
+        ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage(),
       },
     );
   }

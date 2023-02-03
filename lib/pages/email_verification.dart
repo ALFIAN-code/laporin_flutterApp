@@ -66,15 +66,19 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark));
     if (isEmailVerified) {
-      return HomePage();
+      return const HomePage();
     } else {
       return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
+          appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(0),
+              child: AppBar(
+                elevation: 0.0,
+                systemOverlayStyle:
+                    const SystemUiOverlayStyle(statusBarColor: Colors.white),
+              )),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

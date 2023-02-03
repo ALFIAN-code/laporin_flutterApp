@@ -9,16 +9,9 @@ class AuthService extends ChangeNotifier {
   GoogleSignInAccount get user => _user!;
 
   Future signInWithGoogle() async {
-    // final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-
-    // final GoogleSignInAuthentication gAuth = await gUser!.authentication;
-
-    // final credential = GoogleAuthProvider.credential(
-    //     accessToken: gAuth.accessToken, idToken: gAuth.accessToken);
-
-    // return await FirebaseAuth.instance.signInWithCredential(credential);
-
-    final googleUser = await googleSignIn.signIn();
+    // ignore: avoid_print
+    final googleUser =
+        await googleSignIn.signIn().catchError((onError) => print(onError));
     if (googleUser == null) return;
     _user = googleUser;
 
@@ -29,12 +22,16 @@ class AuthService extends ChangeNotifier {
       idToken: googleAuth.idToken,
     );
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance
+        .signInWithCredential(credential)
+        .catchError((onError) => print(onError));
 
     ChangeNotifier();
   }
 
   googleLogout() async {
-    await googleSignIn.disconnect();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.disconnect();
+    }
   }
 }

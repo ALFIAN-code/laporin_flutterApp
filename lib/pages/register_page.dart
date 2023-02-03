@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+// import '../Services/auth_service.dart';
+import '../Services/auth_service.dart';
 import '../component/error_dialog.dart';
 import '../component/my_button.dart';
+import '../component/square_tile.dart';
 import '../component/text_field.dart';
 import '../style.dart';
-import '../component/square_tile.dart';
+// import '../component/square_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,13 +26,16 @@ class _RegisterPageState extends State<RegisterPage> {
   var navigatorkey = GlobalKey<NavigatorState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
+
   // final TextEditingController _confirmPasswordController =
   //     TextEditingController();
   // final Key _emailFormKey = GlobalKey<FormState>();
   // final Key _passwordFormKey = GlobalKey<FormState>();
 
   bool _hidePassword = true;
-  // bool _hideConfirmPassword = true;
+  bool _hideConfirmPassword = true;
 
   void userRegister() async {
     showDialog(
@@ -41,15 +48,25 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         });
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+      if (passwordConfirm()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim());
+
+        // addUserData(
+        //     fullname: _fullnamecontroller.text,
+        //     email: _emailController.text.trim(),
+        //     nik: int.parse(_nikController.text.trim()),
+        //     telp: int.parse(_telpController.text.trim()),
+        //     password: _passwordController.text.trim());
+      }
+
       // ignore: use_build_context_synchronously
-      // Navigator.pop(context);
-      navigatorkey.currentState!.pop();
+      Navigator.pop(context);
+      // navigatorkey.currentState!.pop();
     } on FirebaseAuthException catch (e) {
-      // Navigator.pop(context);
-      navigatorkey.currentState!.pop();
+      Navigator.pop(context);
+      // navigatorkey.currentState!.pop();
 
       if (e.code == 'email-already-in-use') {
         errorDialog(
@@ -76,39 +93,64 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  bool passwordConfirm() {
+    if (_passwordController.text == _passwordConfirmController.text) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Color(0xffFFB247),
-        statusBarIconBrightness: Brightness.dark));
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //     statusBarColor: Color(0xffFFB247),
+    //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(0),
+          child: AppBar(
+            elevation: 0.0,
+            systemOverlayStyle:
+                const SystemUiOverlayStyle(statusBarColor: Color(0xffFFB247)),
+          )),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(100)),
-                      gradient: LinearGradient(
-                          colors: [Color(0xffFFB247), Color(0xffFFEBAF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight)),
-                  child: SvgPicture.asset(
-                    'lib/images/user.svg',
-                    height: deviceHeight * 0.2,
+                Hero(
+                  tag: 'leading',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        borderRadius:
+                            BorderRadius.only(bottomLeft: Radius.circular(100)),
+                        gradient: LinearGradient(
+                            colors: [Color(0xffFFB247), Color(0xffFFEBAF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight)),
+                    child: SvgPicture.asset(
+                      'lib/images/user.svg',
+                      height: deviceHeight * 0.2,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: deviceHeight * 0.04,
+                  height: deviceHeight * 0.03,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(
@@ -121,60 +163,77 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                //username field
-                SizedBox(
-                  height: deviceHeight * 0.02,
-                ),
-                MyTextField(
-                  // formKey: _emailFormKey,
-                  hint: 'Email',
-                  obsecureText: false,
-                  controller: _emailController,
-                ),
-
                 //password field
                 SizedBox(
                   height: deviceHeight * 0.02,
                 ),
                 MyTextField(
+                  textCapitalization: TextCapitalization.none,
+                  // formKey: _emailFormKey,
+                  hint: 'Email',
+                  keyboardType: TextInputType.emailAddress,
+                  obsecureText: false,
+                  controller: _emailController,
+                ),
+
+                SizedBox(
+                  height: deviceHeight * 0.02,
+                ),
+                MyTextField(
+                    textCapitalization: TextCapitalization.none,
                     // formKey: _passwordFormKey,
                     hint: 'Password',
                     obsecureText: _hidePassword,
                     controller: _passwordController,
-                    suffix: IconButton(
-                      icon: (_hidePassword)
-                          ? const Icon(Icons.visibility)
-                          : const Icon(Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          _hidePassword = !_hidePassword;
-                        });
-                      },
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: IconButton(
+                        icon: (_hidePassword)
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _hidePassword = !_hidePassword;
+                          });
+                        },
+                      ),
                     )),
-                // MyTextField(
-                //     hint: 'Confirm Password',
-                //     obsecureText: _hideConfirmPassword,
-                //     controller: _confirmPasswordController,
-                //     suffix: IconButton(
-                //       icon: (_hideConfirmPassword)
-                //           ? const Icon(Icons.visibility)
-                //           : const Icon(Icons.visibility_off),
-                //       onPressed: () {
-                //         setState(() {
-                //           _hideConfirmPassword = !_hideConfirmPassword;
-                //         });
-                //       },
-                //     )),
+                SizedBox(
+                  height: deviceHeight * 0.02,
+                ),
+                MyTextField(
+                    textCapitalization: TextCapitalization.none,
+                    // formKey: _passwordFormKey,
+                    hint: 'confirm Password',
+                    obsecureText: _hideConfirmPassword,
+                    controller: _passwordConfirmController,
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: IconButton(
+                        icon: (_hideConfirmPassword)
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _hideConfirmPassword = !_hideConfirmPassword;
+                          });
+                        },
+                      ),
+                    )),
+
                 SizedBox(
                   height: deviceHeight * 0.02,
                 ),
                 //sign in button
-                MyButton(
-                  onTap: userRegister,
-                  color: const Color(0xffFF8515),
-                  child: Text(
-                    'Register',
-                    style: bold17.copyWith(color: Colors.white),
+                Hero(
+                  tag: 'button',
+                  child: MyButton(
+                    onTap: userRegister,
+                    color: const Color(0xffFF8515),
+                    child: Text(
+                      'Register',
+                      style: bold17.copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
                 //dont have an account? register
@@ -215,7 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text('Atau login dengan',
+                        child: Text('Or Login With',
                             style:
                                 semiBold15.copyWith(color: Colors.grey[700])),
                       ),
@@ -229,26 +288,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 //google & facebook icon
                 SizedBox(
-                  height: deviceHeight * 0.01,
+                  height: deviceHeight * 0.03,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SquareTile(
+                      title: 'Google',
                       imagePath: 'lib/images/google.png',
                       onTap: () {
-                        print('tap tap tap');
+                        AuthService().signInWithGoogle();
                       },
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    SquareTile(
-                      imagePath: 'lib/images/facebook.png',
-                      onTap: () {
-                        print('tap tap tap');
-                      },
-                    )
                   ],
                 )
               ],

@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lapor_in/style.dart';
 
 class MyTextField extends StatelessWidget {
   final String hint;
   final bool obsecureText;
+  final TextInputType? keyboardType;
   // ignore: prefer_typing_uninitialized_variables
   final suffix;
   // ignore: prefer_typing_uninitialized_variables
   final prefix;
-  // final Key formKey;
-  // Key keyField = GlobalKey<FormState>();
   // ignore: prefer_typing_uninitialized_variables
   final controller;
   String? Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormater;
+  final TextCapitalization textCapitalization;
 
-  MyTextField({
-    super.key,
-    required this.hint,
-    required this.obsecureText,
-    this.controller,
-    this.suffix,
-    this.prefix,
-    // this.validator,
-    // required this.formKey
-  });
-// MediaQuery.of(context).size.width * 0.08
+  MyTextField(
+      {this.inputFormater,
+      this.keyboardType,
+      super.key,
+      required this.hint,
+      required this.obsecureText,
+      this.controller,
+      this.suffix,
+      this.prefix,
+      required this.textCapitalization});
   @override
   Widget build(BuildContext context) {
-    var deviceWidth = MediaQuery.of(context).size.width;
-    var deviceHeight =
-        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-
     return Padding(
       padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.07),
@@ -46,6 +43,9 @@ class MyTextField extends StatelessWidget {
             obscureText: obsecureText,
             onChanged: (value) {},
             maxLines: 1,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormater,
+            textCapitalization: textCapitalization,
             // validator: validator,
             decoration: InputDecoration(
                 fillColor: Colors.grey[200],
@@ -53,7 +53,7 @@ class MyTextField extends StatelessWidget {
                 hintText: hint,
                 suffixIcon: suffix,
                 hintStyle: medium17,
-                contentPadding: EdgeInsets.all(30),
+                contentPadding: const EdgeInsets.all(30),
                 enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.all(Radius.circular(100))),

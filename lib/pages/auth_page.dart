@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lapor_in/pages/email_verification.dart';
 import 'package:lapor_in/pages/login_or_register.dart';
+// import 'package:lapor_in/pages/login_or_register.dart'
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -16,6 +17,10 @@ class AuthPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return const EmailVerification();
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Text('internet connection problem'),
+              );
             } else if (snapshot.hasError) {
               return const Center(
                 child: Text('something went wrong'),

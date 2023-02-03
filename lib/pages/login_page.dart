@@ -56,6 +56,11 @@ class _LoginPageState extends State<LoginPage> {
             title: 'user not found',
             content: e.message.toString(),
             context: context);
+      } else if (e.code == 'invalid-email') {
+        errorDialog(
+            title: 'wrong password',
+            content: e.message.toString(),
+            context: context);
       } else if (e.code == 'wrong-password') {
         errorDialog(
             title: 'wrong password',
@@ -69,6 +74,13 @@ class _LoginPageState extends State<LoginPage> {
             title: 'password cannot be empty', content: '', context: context);
       }
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
   }
 
   @override
@@ -94,23 +106,26 @@ class _LoginPageState extends State<LoginPage> {
           child: Center(
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(100)),
-                      gradient: LinearGradient(
-                          colors: [Color(0xffADFAC2), Color(0xff7DFFFF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight)),
-                  child: SvgPicture.asset(
-                    'lib/images/user.svg',
-                    height: deviceHeight * 0.2,
+                Hero(
+                  tag: 'leading',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        borderRadius:
+                            BorderRadius.only(bottomLeft: Radius.circular(100)),
+                        gradient: LinearGradient(
+                            colors: [Color(0xffADFAC2), Color(0xff7DFFFF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight)),
+                    child: SvgPicture.asset(
+                      'lib/images/user.svg',
+                      height: deviceHeight * 0.2,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: deviceHeight * 0.04,
+                  height: deviceHeight * 0.06,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(
@@ -126,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: deviceHeight * 0.02,
                 ),
                 MyTextField(
+                  textCapitalization: TextCapitalization.none,
                   // validator: (value) {
                   //   return null;
                   // },
@@ -140,18 +156,22 @@ class _LoginPageState extends State<LoginPage> {
                   height: deviceHeight * 0.02,
                 ),
                 MyTextField(
+                    textCapitalization: TextCapitalization.none,
                     hint: 'Password',
                     obsecureText: _hidePassword,
                     controller: _passwordController,
-                    suffix: IconButton(
-                      icon: (_hidePassword)
-                          ? const Icon(Icons.visibility)
-                          : const Icon(Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          _hidePassword = !_hidePassword;
-                        });
-                      },
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: IconButton(
+                        icon: (_hidePassword)
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _hidePassword = !_hidePassword;
+                          });
+                        },
+                      ),
                     )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -174,12 +194,15 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 //sign in button
-                MyButton(
-                  onTap: userSignIn,
-                  color: const Color(0xff8CCD00),
-                  child: Text(
-                    'Sign in',
-                    style: bold17.copyWith(color: Colors.white),
+                Hero(
+                  tag: 'button',
+                  child: MyButton(
+                    onTap: userSignIn,
+                    color: const Color(0xff8CCD00),
+                    child: Text(
+                      'Sign in',
+                      style: bold17.copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
                 //dont have an account? register
@@ -234,12 +257,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 //google & facebook icon
                 SizedBox(
-                  height: deviceHeight * 0.02,
+                  height: deviceHeight * 0.03,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SquareTile(
+                      title: 'Google',
                       imagePath: 'lib/images/google.png',
                       onTap: () {
                         AuthService().signInWithGoogle();

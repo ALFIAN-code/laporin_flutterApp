@@ -27,6 +27,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           .sendPasswordResetEmail(email: _emailControler.text.trim());
 
       // Navigator.pop(context);
+      // ignore: use_build_context_synchronously
       errorDialog(
           title: 'password reset email sent',
           content:
@@ -38,7 +39,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       setState(() => canResentEmail = true);
 
       // ignore: use_build_context_synchronously
-
     } on FirebaseAuthException catch (e) {
       // Navigator.pop(context);
       errorDialog(
@@ -54,102 +54,117 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark));
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //     statusBarColor: Colors.white,
+    //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Icon(Icons.arrow_back),
-                        ),
-                        Text(
-                          "back",
-                          style: semiBold17,
-                        )
-                      ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black,
+        ),
+        title: const Text(
+          'back',
+          style: TextStyle(color: Colors.black),
+        ),
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.white),
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Padding(
+              //   padding: const EdgeInsets.all(10),
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //     },
+              //     child: Row(
+              //       children: [
+              //         const Padding(
+              //           padding: EdgeInsets.all(10.0),
+              //           child: Icon(Icons.arrow_back),
+              //         ),
+              //         Text(
+              //           "back",
+              //           style: semiBold17,
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              Image.asset(
+                'lib/images/forgot_password.jpg',
+                height: MediaQuery.of(context).size.height * 0.4,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text('Forgot Password',
+                  style: bold25.copyWith(color: const Color(0xff575151))),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                    'We will send a link to your email to reset your password',
+                    textAlign: TextAlign.center,
+                    style: regular15.copyWith(color: const Color(0xff575151))),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              MyTextField(
+                  textCapitalization: TextCapitalization.none,
+                  controller: _emailControler,
+                  hint: 'example@mail.com',
+                  obsecureText: false),
+              const SizedBox(
+                height: 20,
+              ),
+              MyButton(
+                onTap: () {
+                  if (canResentEmail) {
+                    resetPassword();
+                  } else {
+                    errorDialog(
+                        title: 'Email has ben sent',
+                        content: 'wait 60 seconds to send again',
+                        context: context);
+                  }
+                },
+                color: canResentEmail ? Color(0xffFF8515) : Colors.grey,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.email,
+                      color: Colors.white,
                     ),
-                  ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Send',
+                      style: bold17.copyWith(color: Colors.white, fontSize: 22),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
                 ),
-                Image.asset(
-                  'lib/images/forgot_password.jpg',
-                  height: MediaQuery.of(context).size.height * 0.4,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text('Forgot Password',
-                    style: bold25.copyWith(color: const Color(0xff575151))),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                      'We will send a link to your email to reset your account password',
-                      textAlign: TextAlign.center,
-                      style:
-                          regular15.copyWith(color: const Color(0xff575151))),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                MyTextField(
-                    controller: _emailControler,
-                    hint: 'example@mail.com',
-                    obsecureText: false),
-                const SizedBox(
-                  height: 10,
-                ),
-                MyButton(
-                  onTap: () {
-                    if (canResentEmail) {
-                      resetPassword();
-                    } else {
-                      errorDialog(
-                          title: 'Email has ben sent',
-                          content: 'wait 60 seconds to send again',
-                          context: context);
-                    }
-                  },
-                  color: canResentEmail ? Color(0xffFF8515) : Colors.grey,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.email,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'sent',
-                        style: bold17.copyWith(color: Colors.white),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
