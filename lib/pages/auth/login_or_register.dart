@@ -1,7 +1,7 @@
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:lapor_in/pages/login_page.dart';
-import 'package:lapor_in/pages/register_page.dart';
+import 'login_page.dart';
+import 'register_page.dart';
 
 class LoginOrRegister extends StatefulWidget {
   LoginOrRegister({super.key});

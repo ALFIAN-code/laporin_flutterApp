@@ -1,78 +1,129 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lapor_in/Services/auth_service.dart';
-import 'package:lapor_in/component/my_button.dart';
-import 'package:lapor_in/component/square_tile.dart';
-import 'package:lapor_in/component/text_field.dart';
-import 'package:lapor_in/pages/forgot_password_page.dart';
-import 'package:lapor_in/style.dart';
+import '../../Services/auth_service.dart';
+import '../../component/error_dialog.dart';
+import '../../component/my_button.dart';
+import '../../component/square_tile.dart';
+import '../../component/text_field.dart';
+import '../theme/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../component/error_dialog.dart';
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key, required this.onTap});
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.onTap});
-
-  static String routesName = '/login';
+  static String routesName = '/register';
   final void Function() onTap;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  var navigatorkey = GlobalKey<NavigatorState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  var navigatorkey = GlobalKey<NavigatorState>();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
 
-  bool _hidePassword = true;
+  // final TextEditingController _confirmPasswordController =
+  //     TextEditingController();
   // final Key _emailFormKey = GlobalKey<FormState>();
   // final Key _passwordFormKey = GlobalKey<FormState>();
 
-  void userSignIn() async {
+  bool _hidePassword = true;
+  bool _hideConfirmPassword = true;
+
+  //function for add details info to database
+  postDetailsToFirestore(
+      {required String email,
+      required String role,
+      required String password,
+      required String fullname}) async {
+    var user = FirebaseAuth.instance.currentUser;
+    CollectionReference ref = FirebaseFirestore.instance.collection('users');
+    ref.doc(user!.uid).set({
+      'fullname': fullname.toUpperCase(),
+      'email': _emailController.text,
+      'password': password,
+      'role': role
+    });
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  //function for user register and add details using postDetailsToFirestore
+  void userRegister() async {
     showDialog(
         context: context,
         builder: (context) {
           return const Center(
-            child: RefreshProgressIndicator(
+            child: CircularProgressIndicator(
               color: Color(0xff8CCD00),
             ),
           );
         });
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-      // ignore: use_build_context_synchronously
-      // navigatorkey.currentState!.pop();
+      if (passwordConfirm()) {
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim())
+            .then((value) => postDetailsToFirestore(
+                fullname: _fullnameController.text,
+                email: _emailController.text,
+                password: _passwordController.text,
+                role: 'user'));
+      }
+
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
+      // navigatorkey.currentState!.pop();
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       // navigatorkey.currentState!.pop();
-      if (e.code == 'user-not-found') {
+      if (e.code == 'email-already-in-use') {
         errorDialog(
-            title: 'user not found',
+            title: 'email already in use',
             content: e.message.toString(),
             context: context);
       } else if (e.code == 'invalid-email') {
         errorDialog(
-            title: 'wrong password',
+            title: 'invalid email',
             content: e.message.toString(),
             context: context);
-      } else if (e.code == 'wrong-password') {
+      } else if (e.code == 'weak-password') {
         errorDialog(
-            title: 'wrong password',
+            title: 'weak password',
             content: e.message.toString(),
+            context: context);
+      } else if (_fullnameController.text.isEmpty) {
+        errorDialog(
+            title: 'Fullname field cannot be empty',
+            content: '',
             context: context);
       } else if (_emailController.text.isEmpty) {
         errorDialog(
-            title: 'email cannot be empty', content: '', context: context);
+            title: 'email field cannot be empty',
+            content: '',
+            context: context);
       } else if (_passwordController.text.isEmpty) {
         errorDialog(
-            title: 'password cannot be empty', content: '', context: context);
+            title: 'password field cannot be empty',
+            content: '',
+            context: context);
       }
+    }
+  }
+
+  //function for confirm user password
+  bool passwordConfirm() {
+    if (_passwordController.text == _passwordConfirmController.text) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -81,16 +132,16 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordConfirmController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
     // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     statusBarColor: Color(0xffADFAC2),
+    //     statusBarColor: Color(0xffFFB247),
     //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
@@ -99,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
           child: AppBar(
             elevation: 0.0,
             systemOverlayStyle:
-                const SystemUiOverlayStyle(statusBarColor: Color(0xffADFAC2)),
+                const SystemUiOverlayStyle(statusBarColor: Color(0xffFFB247)),
           )),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -109,54 +160,63 @@ class _LoginPageState extends State<LoginPage> {
                 Hero(
                   tag: 'leading',
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    padding: const EdgeInsets.symmetric(vertical: 30),
                     width: double.infinity,
                     decoration: const BoxDecoration(
                         borderRadius:
                             BorderRadius.only(bottomLeft: Radius.circular(100)),
                         gradient: LinearGradient(
-                            colors: [Color(0xffADFAC2), Color(0xff7DFFFF)],
+                            colors: [Color(0xffFFB247), Color(0xffFFEBAF)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight)),
                     child: SvgPicture.asset(
                       'lib/images/user.svg',
-                      height: deviceHeight * 0.2,
+                      height: deviceHeight * 0.16,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: deviceHeight * 0.06,
+                  height: deviceHeight * 0.03,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.1),
                   width: double.infinity,
                   child: Text(
-                    'Sign in',
-                    style: bold40.copyWith(color: const Color(0xff575151)),
+                    'Register',
+                    style: bold40.copyWith(
+                      color: const Color(0xff575151),
+                    ),
                   ),
                 ),
-                //username field
                 SizedBox(
                   height: deviceHeight * 0.02,
                 ),
                 MyTextField(
                   textCapitalization: TextCapitalization.none,
-                  // validator: (value) {
-                  //   return null;
-                  // },
+                  hint: 'Fullname',
+                  keyboardType: TextInputType.emailAddress,
+                  obsecureText: false,
+                  controller: _fullnameController,
+                ),
+                SizedBox(
+                  height: deviceHeight * 0.02,
+                ),
+                MyTextField(
+                  textCapitalization: TextCapitalization.none,
                   // formKey: _emailFormKey,
                   hint: 'Email',
+                  keyboardType: TextInputType.emailAddress,
                   obsecureText: false,
                   controller: _emailController,
                 ),
 
-                //password field
                 SizedBox(
                   height: deviceHeight * 0.02,
                 ),
                 MyTextField(
                     textCapitalization: TextCapitalization.none,
+                    // formKey: _passwordFormKey,
                     hint: 'Password',
                     obsecureText: _hidePassword,
                     controller: _passwordController,
@@ -173,34 +233,39 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: deviceHeight * 0.005,
-                          horizontal: deviceWidth * 0.08),
-                      child: TextButton(
+                SizedBox(
+                  height: deviceHeight * 0.02,
+                ),
+                MyTextField(
+                    textCapitalization: TextCapitalization.none,
+                    hint: 'confirm Password',
+                    obsecureText: _hideConfirmPassword,
+                    controller: _passwordConfirmController,
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: IconButton(
+                        icon: (_hideConfirmPassword)
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
                         onPressed: () {
-                          Navigator.pushNamed(
-                              context, ForgotPasswordPage.routesName);
+                          setState(() {
+                            _hideConfirmPassword = !_hideConfirmPassword;
+                          });
                         },
-                        child: Text('Forgot Password?',
-                            style: regular15.copyWith(
-                              color: Colors.grey[600],
-                            )),
                       ),
-                    ),
-                  ],
+                    )),
+
+                SizedBox(
+                  height: deviceHeight * 0.02,
                 ),
                 //sign in button
                 Hero(
                   tag: 'button',
                   child: MyButton(
-                    onTap: userSignIn,
-                    color: const Color(0xff8CCD00),
+                    onTap: userRegister,
+                    color: const Color(0xffFF8515),
                     child: Text(
-                      'Sign in',
+                      'Register',
                       style: bold17.copyWith(color: Colors.white),
                     ),
                   ),
@@ -212,26 +277,26 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('don\'t have an account? ',
+                    Text('have an account? ',
                         style: medium15.copyWith(
                           color: Colors.grey[600],
                         )),
                     TextButton(
                         onPressed: widget.onTap,
                         // () {
-                        //   Navigator.of(context)
-                        //       .pushReplacementNamed(RegisterPage.routesName);
+                        //   // Navigator.pushReplacementNamed(
+                        //   //     context, LoginPage.routesName);
+
                         // },
                         child: Text(
-                          'Register',
+                          'sign in',
                           style: medium15,
                         )),
                   ],
                 ),
-                //or sign in with
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -257,7 +322,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 //google & facebook icon
                 SizedBox(
-                  height: deviceHeight * 0.03,
+                  height: deviceHeight * 0.02,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

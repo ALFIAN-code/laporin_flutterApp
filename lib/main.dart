@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lapor_in/component/snackbar.dart';
-import 'package:lapor_in/pages/forgot_password_page.dart';
-import 'package:lapor_in/pages/login_page.dart';
-import 'package:lapor_in/pages/register_page.dart';
-import '../pages/auth_page.dart';
-import '../pages/home_page.dart';
+import 'package:lapor_in/pages/auth/auth_page.dart';
+import 'package:lapor_in/pages/auth/forgot_password_page.dart';
+import 'package:lapor_in/pages/dashboard/admin_dasboard.dart';
+import 'package:lapor_in/pages/dashboard/petugas_dasboard.dart';
+import 'pages/user/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       scaffoldMessengerKey: utils.messengerKey,
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      home: const AuthPage(),
+      home: AuthPage(),
       title: 'Lapor in',
       theme: ThemeData(
         visualDensity: VisualDensity.standard,
@@ -34,9 +34,11 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AuthPage.routesName,
       routes: {
-        HomePage.routesName: (context) => HomePage(),
-        AuthPage.routesName: (context) => const AuthPage(),
+        HomePage.routesName: (context) => const HomePage(),
+        AuthPage.routesName: (context) => AuthPage(),
         ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage(),
+        PetugasDashboard.routesName: (context) => const PetugasDashboard(),
+        AdminDashboard.routesName: (context) => const AdminDashboard()
       },
     );
   }

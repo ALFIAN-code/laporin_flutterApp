@@ -1,33 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lapor_in/Services/auth_service.dart';
+import 'package:lapor_in/pages/auth/auth_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AdminDashboard extends StatefulWidget {
+  const AdminDashboard({super.key});
 
-  static String routesName = '/homepage';
+  static String routesName = '/AdminDashboard';
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AdminDashboardState extends State<AdminDashboard> {
   void userSignOut() {
     AuthService().googleLogout();
-
     FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, AuthPage.routesName);
   }
 
   final user = FirebaseAuth.instance.currentUser;
-  // @override
-  // Future<void> initState() async {
-  //   super.initState();
-
-  //   await FirebaseFirestore.instance.collection('user').add({
-  //     'userID': user?.uid,
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('logged in as ${user?.email}'),
+            const Text('this is AdminDashboard'),
             IconButton(onPressed: userSignOut, icon: const Icon(Icons.logout))
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lapor_in/style.dart';
+import 'package:lapor_in/pages/theme/style.dart';
 
 class SquareTile extends StatelessWidget {
   String imagePath;

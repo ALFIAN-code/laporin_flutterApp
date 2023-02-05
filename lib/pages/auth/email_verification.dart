@@ -1,13 +1,15 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/error_dialog.dart';
 import 'package:lapor_in/component/my_button.dart';
 import 'package:lapor_in/component/snackbar.dart';
-import 'package:lapor_in/pages/home_page.dart';
-import 'package:lapor_in/style.dart';
+import 'package:lapor_in/pages/page_manager.dart';
+import 'package:lapor_in/pages/theme/style.dart';
+import 'package:lapor_in/pages/user/home_page.dart';
 
 class EmailVerification extends StatefulWidget {
   const EmailVerification({super.key});
@@ -21,14 +23,16 @@ class _EmailVerificationState extends State<EmailVerification> {
   Timer? timer;
   bool canResentEmail = false;
 
+  bool userPage = false;
+  bool adminPage = false;
+  bool petugasPage = false;
+
   @override
   void initState() {
     super.initState();
     isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-
     if (!isEmailVerified) {
       sendVerificationEmail();
-
       timer = Timer.periodic(
           const Duration(seconds: 3), (timer) => checkEmailVerified());
     }
@@ -37,18 +41,17 @@ class _EmailVerificationState extends State<EmailVerification> {
   @override
   void dispose() {
     timer?.cancel();
-
     super.dispose();
   }
 
   Future checkEmailVerified() async {
     await FirebaseAuth.instance.currentUser!.reload();
-
     setState(() {
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
-
-    if (isEmailVerified) timer?.cancel();
+    if (isEmailVerified) {
+      timer?.cancel();
+    }
   }
 
   Future sendVerificationEmail() async {
@@ -67,7 +70,7 @@ class _EmailVerificationState extends State<EmailVerification> {
   @override
   Widget build(BuildContext context) {
     if (isEmailVerified) {
-      return const HomePage();
+      return const PageManager();
     } else {
       return SafeArea(
         child: Scaffold(
