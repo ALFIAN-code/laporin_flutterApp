@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lapor_in/component/error_dialog.dart';
 import 'package:lapor_in/component/my_button.dart';
-import 'package:lapor_in/component/snackbar.dart';
+import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/pages/page_manager.dart';
 import 'package:lapor_in/pages/theme/style.dart';
-import 'package:lapor_in/pages/user/home_page.dart';
 
 class EmailVerification extends StatefulWidget {
   const EmailVerification({super.key});
@@ -22,13 +21,21 @@ class _EmailVerificationState extends State<EmailVerification> {
   bool isEmailVerified = false;
   Timer? timer;
   bool canResentEmail = false;
+  GoogleSignIn gUser = GoogleSignIn();
+  CollectionReference ref = FirebaseFirestore.instance.collection('users');
+  var currentUser = FirebaseAuth.instance.currentUser;
 
-  bool userPage = false;
-  bool adminPage = false;
-  bool petugasPage = false;
+  Future<void> isGoogleSignIn() async {
+    if (await gUser.isSignedIn()) {
+      ref
+          .doc(currentUser?.uid)
+          .set({'email': currentUser?.email, 'role': 'user'});
+    }
+  }
 
   @override
   void initState() {
+    isGoogleSignIn();
     super.initState();
     isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     if (!isEmailVerified) {
@@ -63,7 +70,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       await Future.delayed(const Duration(seconds: 60));
       setState(() => canResentEmail = true);
     } catch (e) {
-      utils.showSnackBar(e.toString());
+      Utils.showSnackBar(e.toString());
     }
   }
 
