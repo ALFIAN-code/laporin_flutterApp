@@ -1,37 +1,68 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:lapor_in/component/utils.dart';
 
 class AuthService extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
 
   GoogleSignInAccount? _user;
   GoogleSignInAccount get user => _user!;
+  var navigatorkey = GlobalKey<NavigatorState>();
 
-  Future signInWithGoogle() async {
-    // ignore: avoid_print
-    final googleUser =
-        await googleSignIn.signIn().catchError((onError) => print(onError));
-    if (googleUser == null) return;
-    _user = googleUser;
+  Future signInWithGoogle(BuildContext context) async {
+    var hasInternet = await InternetConnectionChecker().hasConnection;
 
-    final googleAuth = await googleUser.authentication;
+    if (hasInternet) {
+      try {
+        // ignore: use_build_context_synchronously
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const Center(
+                child: RefreshProgressIndicator(
+                  color: Color(0xff8CCD00),
+                ),
+              );
+            });
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+        final googleUser = await googleSignIn
+            .signIn()
+            .catchError((onError) => Utils.showSnackBar(onError));
+        if (googleUser == null) return;
+        _user = googleUser;
 
-    await FirebaseAuth.instance
-        .signInWithCredential(credential)
-        .catchError((onError) => print(onError));
+        final googleAuth = await googleUser.authentication;
 
-    ChangeNotifier();
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        await FirebaseAuth.instance
+            .signInWithCredential(credential)
+            .catchError((onError) => Utils.showSnackBar(onError));
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      } catch (e) {
+        Utils.showSnackBar(e.toString());
+      }
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      Utils.showSnackBar('yahhh gak ada internet');
+    }
   }
 
   googleLogout() async {
+    var hasInternet = await InternetConnectionChecker().hasConnection;
     if (await googleSignIn.isSignedIn()) {
-      await googleSignIn.disconnect();
+      if (hasInternet) {
+        await googleSignIn.disconnect();
+      } else {
+        Utils.showSnackBar('yahhh gak ada internet');
+      }
     }
   }
 }

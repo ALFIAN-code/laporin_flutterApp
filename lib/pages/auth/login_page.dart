@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lapor_in/Services/auth_service.dart';
 import 'package:lapor_in/component/my_button.dart';
 import 'package:lapor_in/component/square_tile.dart';
 import 'package:lapor_in/component/text_field.dart';
+import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -29,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _hidePassword = true;
   // final Key _emailFormKey = GlobalKey<FormState>();
   // final Key _passwordFormKey = GlobalKey<FormState>();
+  var hasConnection = InternetConnectionChecker().hasConnection;
 
   void userSignIn() async {
     showDialog(
@@ -45,20 +48,10 @@ class _LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
-
-      // final user = FirebaseAuth.instance.currentUser;
-      // await FirebaseFirestore.instance.collection('user').doc(user?.uid).get().then((value) {
-      //   if (value) {
-
-      //   }
-      // });
-      // ignore: use_build_context_synchronously
-      // navigatorkey.currentState!.pop();
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      // navigatorkey.currentState!.pop();
       if (e.code == 'user-not-found') {
         errorDialog(
             title: 'user not found',
@@ -80,6 +73,8 @@ class _LoginPageState extends State<LoginPage> {
       } else if (_passwordController.text.isEmpty) {
         errorDialog(
             title: 'password cannot be empty', content: '', context: context);
+      } else if (await hasConnection) {
+        Utils.showSnackBar('tidak ada internet');
       }
     }
   }
@@ -96,10 +91,6 @@ class _LoginPageState extends State<LoginPage> {
     var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     statusBarColor: Color(0xffADFAC2),
-    //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -133,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(
-                  height: deviceHeight * 0.06,
+                  height: deviceHeight * 0.04,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(
@@ -150,10 +141,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 MyTextField(
                   textCapitalization: TextCapitalization.none,
-                  // validator: (value) {
-                  //   return null;
-                  // },
-                  // formKey: _emailFormKey,
                   hint: 'Email',
                   obsecureText: false,
                   controller: _emailController,
@@ -226,10 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                         )),
                     TextButton(
                         onPressed: widget.onTap,
-                        // () {
-                        //   Navigator.of(context)
-                        //       .pushReplacementNamed(RegisterPage.routesName);
-                        // },
                         child: Text(
                           'Register',
                           style: medium15,
@@ -274,7 +257,7 @@ class _LoginPageState extends State<LoginPage> {
                       title: 'Google',
                       imagePath: 'lib/images/google.png',
                       onTap: () {
-                        AuthService().signInWithGoogle();
+                        AuthService().signInWithGoogle(context);
                       },
                     ),
                   ],

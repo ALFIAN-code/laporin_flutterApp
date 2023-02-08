@@ -36,7 +36,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
       setState(() => canResentEmail = false);
       await Future.delayed(const Duration(seconds: 60));
-      setState(() => canResentEmail = true);
+      if (!mounted) {
+        setState(() => canResentEmail = true);
+      }
 
       // ignore: use_build_context_synchronously
     } on FirebaseAuthException catch (e) {
@@ -44,12 +46,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       errorDialog(
           title: e.code, content: e.message.toString(), context: context);
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _emailControler.dispose();
   }
 
   @override
@@ -82,26 +78,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.all(10),
-              //   child: GestureDetector(
-              //     onTap: () {
-              //       Navigator.pop(context);
-              //     },
-              //     child: Row(
-              //       children: [
-              //         const Padding(
-              //           padding: EdgeInsets.all(10.0),
-              //           child: Icon(Icons.arrow_back),
-              //         ),
-              //         Text(
-              //           "back",
-              //           style: semiBold17,
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // ),
               Image.asset(
                 'lib/images/forgot_password.jpg',
                 height: MediaQuery.of(context).size.height * 0.4,
