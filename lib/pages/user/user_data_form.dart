@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/error_dialog.dart';
-import 'package:lapor_in/pages/page_manager.dart';
 import 'package:lapor_in/pages/user/home_page.dart';
 import '../../component/my_button.dart';
 import '../../component/text_field.dart';
