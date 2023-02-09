@@ -39,7 +39,6 @@ class AuthService extends ChangeNotifier {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-
         await FirebaseAuth.instance
             .signInWithCredential(credential)
             .catchError((onError) => Utils.showSnackBar(onError));

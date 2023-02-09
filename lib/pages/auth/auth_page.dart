@@ -18,7 +18,7 @@ class AuthPage extends StatelessWidget {
             if (snapshot.hasData) {
               return const EmailVerification();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return Utils.showSnackBar('tidak ada koneksi internet');
+              return const Text('data');
             } else if (snapshot.hasError) {
               return const Center(
                 child: Text('something went wrong'),

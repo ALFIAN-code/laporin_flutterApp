@@ -5,6 +5,8 @@ import 'package:lapor_in/pages/auth/auth_page.dart';
 import 'package:lapor_in/pages/auth/forgot_password_page.dart';
 import 'package:lapor_in/pages/admin/admin_dasboard.dart';
 import 'package:lapor_in/pages/admin/petugas_dasboard.dart';
+import 'package:lapor_in/pages/user/add_laporan.dart';
+import 'package:lapor_in/pages/user/lengkapi_data.dart';
 import 'pages/user/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -38,12 +40,13 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AuthPage.routesName,
       routes: {
-        HomePage.routesName: (context) => HomePage(),
+        HomePage.routesName: (context) => const HomePage(),
         AuthPage.routesName: (context) => const AuthPage(),
         ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage(),
         PetugasDashboard.routesName: (context) => const PetugasDashboard(),
         AdminDashboard.routesName: (context) => const AdminDashboard(),
-        // PageManager.routesName: (context) => const PageManager()
+        AddLaporan.routesName: (context) => const AddLaporan(),
+        LengkapiData.routesName: (context) => LengkapiData()
       },
     );
   }

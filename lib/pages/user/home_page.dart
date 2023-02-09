@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,21 +7,60 @@ import 'package:lapor_in/Services/auth_service.dart';
 import 'package:lapor_in/component/laporan_componen.dart';
 import 'package:lapor_in/pages/auth/auth_page.dart';
 import 'package:lapor_in/pages/theme/style.dart';
+import 'package:lapor_in/pages/user/add_laporan.dart';
+import 'package:lapor_in/pages/user/lengkapi_data.dart';
 // import 'package:lapor_in/pages/theme/style.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static String routesName = '/homepage';
-  HomePage({super.key});
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  // var currentUser = FirebaseAuth.instance.currentUser;
+  bool isDataComplete = false;
+
+  // ignore: prefer_typing_uninitialized_variables
+  var userData = FirebaseFirestore.instance
+      .collection("users")
+      .doc(FirebaseAuth.instance.currentUser?.uid)
+      .snapshots();
+
+  void _getdata() {
+    User? user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      if (mounted) {
+        setState(() {
+          isDataComplete = userData.data()!['is_data_complete'];
+        });
+      }
+    });
+  }
+
   userSignOut(BuildContext context) {
     AuthService().googleLogout();
     FirebaseAuth.instance.signOut();
     Navigator.pushReplacementNamed(context, AuthPage.routesName);
   }
 
-  final user = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    _getdata();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    String? fullname = FirebaseAuth.instance.currentUser?.displayName as String;
+    String firstname = fullname.split(' ').first;
+
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(0),
@@ -46,7 +86,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      'BAGUS ALFIAN',
+                      fullname,
                       style: semiBold17,
                     ),
                     backgroundColor: const Color(0xffAFA1FF),
@@ -60,7 +100,8 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hallo BAGUS,',
+                              'hallo $firstname',
+                              maxLines: 1,
                               style: regular17.copyWith(
                                   color: Colors.white, fontSize: 24),
                             ),
@@ -111,15 +152,17 @@ class HomePage extends StatelessWidget {
                         BorderRadius.vertical(top: Radius.circular(30))),
                 child: Column(
                   children: [
+                    //tambah laporan button
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 30),
+                      padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AddLaporan.routesName);
+                          },
                           child: Container(
                             height: 100,
                             width: double.infinity,
@@ -162,6 +205,71 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    //lengkapi data button
+                    Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, LengkapiData.routesName);
+                              // Navigator.pushNamed(
+                              //     context, LengkapiData.routesName);
+                            },
+                            child: isDataComplete
+                                ? Container()
+                                : Container(
+                                    height: 110,
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.fromLTRB(
+                                        40, 12, 20, 12),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xffFF0000)
+                                            .withAlpha(130),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          // mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              'Lengkapi data anda',
+                                              style: bold17.copyWith(
+                                                  fontSize: 18,
+                                                  color:
+                                                      const Color(0xff363636)),
+                                            ),
+                                            SizedBox(
+                                              width: 190,
+                                              child: Text(
+                                                  'agar laporan anda bisa di eksekusi dengan baik',
+                                                  maxLines: 2,
+                                                  style: regular15),
+                                            ),
+                                          ],
+                                        ),
+                                        const Icon(
+                                          Icons.report_problem,
+                                          size: 50,
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                      ),
+                    ),
+
+                    //text riwayat laporan
                     Container(
                       width: double.infinity,
                       margin: const EdgeInsets.symmetric(horizontal: 50),
@@ -173,6 +281,8 @@ class HomePage extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
+
+                    //list riwayat laporan
                     Expanded(
                       child: ListView.builder(
                         itemCount: 20,

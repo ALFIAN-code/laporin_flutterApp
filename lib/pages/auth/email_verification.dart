@@ -27,9 +27,21 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   Future<void> isGoogleSignIn() async {
     if (await gUser.isSignedIn()) {
-      ref
+      FirebaseFirestore.instance
+          .collection("users")
           .doc(currentUser?.uid)
-          .set({'email': currentUser?.email, 'role': 'user'});
+          .get()
+          .then((value) => {
+                if (!value.exists)
+                  {
+                    ref.doc(currentUser?.uid).set({
+                      'fullname': currentUser?.displayName,
+                      'email': currentUser?.email,
+                      'role': 'user',
+                      'is_data_complete': false
+                    })
+                  }
+              });
     }
   }
 
@@ -79,80 +91,76 @@ class _EmailVerificationState extends State<EmailVerification> {
     if (isEmailVerified) {
       return const PageManager();
     } else {
-      return SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(0),
-              child: AppBar(
-                elevation: 0.0,
-                systemOverlayStyle:
-                    const SystemUiOverlayStyle(statusBarColor: Colors.white),
-              )),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'lib/images/email_verification.jpg',
-                  height: MediaQuery.of(context).size.height * 0.4,
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: AppBar(
+              elevation: 0.0,
+              systemOverlayStyle:
+                  const SystemUiOverlayStyle(statusBarColor: Colors.white),
+            )),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'lib/images/email_verification.jpg',
+                height: MediaQuery.of(context).size.height * 0.4,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text('Verify Email',
+                  style: bold25.copyWith(color: const Color(0xff575151))),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text('A verification email has ben sent to your email',
+                    textAlign: TextAlign.center,
+                    style: regular15.copyWith(color: const Color(0xff575151))),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              MyButton(
+                onTap: () {
+                  if (canResentEmail) {
+                    sendVerificationEmail();
+                  } else {
+                    errorDialog(
+                        title: 'Email has ben sent',
+                        content: 'wait 60 seconds to send again',
+                        context: context);
+                  }
+                },
+                color: (canResentEmail) ? const Color(0xff8CCD00) : Colors.grey,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.email,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Resent Email',
+                      style: bold17.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text('Verify Email',
-                    style: bold25.copyWith(color: const Color(0xff575151))),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text('A verification email has ben sent to your email',
-                      textAlign: TextAlign.center,
-                      style:
-                          regular15.copyWith(color: const Color(0xff575151))),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                MyButton(
-                  onTap: () {
-                    if (canResentEmail) {
-                      sendVerificationEmail();
-                    } else {
-                      errorDialog(
-                          title: 'Email has ben sent',
-                          content: 'wait 60 seconds to send again',
-                          context: context);
-                    }
-                  },
-                  color:
-                      (canResentEmail) ? const Color(0xff8CCD00) : Colors.grey,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.email,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Resent Email',
-                        style: bold17.copyWith(color: Colors.white),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                    ],
-                  ),
-                ),
-                TextButton(
-                    onPressed: () => FirebaseAuth.instance.signOut(),
-                    child: const Text('cancel'))
-              ],
-            ),
+              ),
+              TextButton(
+                  onPressed: () => FirebaseAuth.instance.signOut(),
+                  child: const Text('cancel'))
+            ],
           ),
         ),
       );

@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmController =
       TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
 
   // final TextEditingController _confirmPasswordController =
   //     TextEditingController();
@@ -43,9 +44,11 @@ class _RegisterPageState extends State<RegisterPage> {
     var user = FirebaseAuth.instance.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
     ref.doc(user!.uid).set({
+      'fullname': _fullnameController.text,
       'email': _emailController.text,
       'password': password,
       'role': role,
+      'is_data_complete': false
     });
     // Navigator.pushReplacement(
     //     context, MaterialPageRoute(builder: (context) => LoginPage()));
@@ -183,6 +186,17 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 height: deviceHeight * 0.02,
               ),
+              SizedBox(
+                height: deviceHeight * 0.02,
+              ),
+              MyTextField(
+                textCapitalization: TextCapitalization.none,
+                // formKey: _emailFormKey,
+                hint: 'Fullname',
+                obsecureText: false,
+                controller: _fullnameController,
+              ),
+
               SizedBox(
                 height: deviceHeight * 0.02,
               ),

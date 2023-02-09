@@ -9,7 +9,6 @@ import 'package:lapor_in/component/text_field.dart';
 import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../component/error_dialog.dart';
 import 'forgot_password_page.dart';
 
