@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../Services/auth_service.dart';
-import '../../component/error_dialog.dart';
-import '../../component/my_button.dart';
-import '../../component/square_tile.dart';
-import '../../component/text_field.dart';
-import '../theme/style.dart';
+import 'package:lapor_in/pages/auth/desktop/register_page_desktop.dart';
+import 'package:lapor_in/pages/auth/mobile/register_page_mobile.dart';
+import '../../../component/error_dialog.dart';
+import '../responsive_layout.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -131,212 +127,33 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceHeight =
-        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     statusBarColor: Color(0xffFFB247),
-    //     statusBarIconBrightness: Brightness.dark));
-
-    return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(0),
-          child: AppBar(
-            elevation: 0.0,
-            systemOverlayStyle:
-                const SystemUiOverlayStyle(statusBarColor: Color(0xffFFB247)),
-          )),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-              child: Column(
-            children: [
-              Hero(
-                tag: 'leading',
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(100)),
-                      gradient: LinearGradient(
-                          colors: [Color(0xffFFB247), Color(0xffFFEBAF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight)),
-                  child: SvgPicture.asset(
-                    'lib/images/user.svg',
-                    height: deviceHeight * 0.2,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: deviceHeight * 0.03,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                width: double.infinity,
-                child: Text(
-                  'Register',
-                  style: bold40.copyWith(
-                    color: const Color(0xff575151),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              MyTextField(
-                textCapitalization: TextCapitalization.none,
-                // formKey: _emailFormKey,
-                hint: 'Fullname',
-                obsecureText: false,
-                controller: _fullnameController,
-              ),
-
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              MyTextField(
-                textCapitalization: TextCapitalization.none,
-                // formKey: _emailFormKey,
-                hint: 'Email',
-                keyboardType: TextInputType.emailAddress,
-                obsecureText: false,
-                controller: _emailController,
-              ),
-
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              MyTextField(
-                  textCapitalization: TextCapitalization.none,
-                  // formKey: _passwordFormKey,
-                  hint: 'Password',
-                  obsecureText: _hidePassword,
-                  controller: _passwordController,
-                  suffix: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: IconButton(
-                      icon: (_hidePassword)
-                          ? const Icon(Icons.visibility)
-                          : const Icon(Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          _hidePassword = !_hidePassword;
-                        });
-                      },
-                    ),
-                  )),
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              MyTextField(
-                  textCapitalization: TextCapitalization.none,
-                  hint: 'confirm Password',
-                  obsecureText: _hideConfirmPassword,
-                  controller: _passwordConfirmController,
-                  suffix: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: IconButton(
-                      icon: (_hideConfirmPassword)
-                          ? const Icon(Icons.visibility)
-                          : const Icon(Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          _hideConfirmPassword = !_hideConfirmPassword;
-                        });
-                      },
-                    ),
-                  )),
-
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              //sign in button
-              Hero(
-                tag: 'button',
-                child: MyButton(
-                  onTap: userRegister,
-                  color: const Color(0xffFF8515),
-                  child: Text(
-                    'Register',
-                    style: bold17.copyWith(color: Colors.white),
-                  ),
-                ),
-              ),
-              //dont have an account? register
-              SizedBox(
-                height: deviceHeight * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('have an account? ',
-                      style: medium15.copyWith(
-                        color: Colors.grey[600],
-                      )),
-                  TextButton(
-                      onPressed: widget.onTap,
-                      // () {
-                      //   // Navigator.pushReplacementNamed(
-                      //   //     context, LoginPage.routesName);
-
-                      // },
-                      child: Text(
-                        'sign in',
-                        style: medium15,
-                      )),
-                ],
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text('Or Login With',
-                          style: semiBold15.copyWith(color: Colors.grey[700])),
-                    ),
-                    Expanded(
-                        child: Divider(
-                      thickness: 0.5,
-                      color: Colors.grey[400],
-                    )),
-                  ],
-                ),
-              ),
-              //google & facebook icon
-              SizedBox(
-                height: deviceHeight * 0.02,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SquareTile(
-                    title: 'Google',
-                    imagePath: 'lib/images/google.png',
-                    onTap: () {
-                      AuthService().signInWithGoogle(context);
-                    },
-                  ),
-                ],
-              )
-            ],
-          )),
-        ),
-      ),
-    );
+    return ResponsiveLayout(
+        mobileScafold: RegisterPageMobile(
+            emailController: _emailController,
+            hidePassword: _hidePassword,
+            passwordController: _passwordController,
+            onTap: widget.onTap,
+            fullnameController: _fullnameController,
+            hideConfirmPassword: _hideConfirmPassword,
+            passwordConfirmController: _passwordConfirmController,
+            userRegister: userRegister),
+        tabletScafold: RegisterPageMobile(
+            emailController: _emailController,
+            hidePassword: _hidePassword,
+            passwordController: _passwordController,
+            onTap: widget.onTap,
+            fullnameController: _fullnameController,
+            hideConfirmPassword: _hideConfirmPassword,
+            passwordConfirmController: _passwordConfirmController,
+            userRegister: userRegister),
+        desktopScafold: RegisterPageDesktop(
+            emailController: _emailController,
+            hidePassword: _hidePassword,
+            passwordController: _passwordController,
+            onTap: widget.onTap,
+            fullnameController: _fullnameController,
+            hideConfirmPassword: _hideConfirmPassword,
+            passwordConfirmController: _passwordConfirmController,
+            userRegister: userRegister));
   }
 }

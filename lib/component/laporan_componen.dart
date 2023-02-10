@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lapor_in/pages/theme/style.dart';
+
+import '../pages/theme/style.dart';
 
 class LaporanView extends StatelessWidget {
   const LaporanView({super.key});

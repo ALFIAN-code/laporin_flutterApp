@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,7 +28,7 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>lapor_in</title>
   <link rel="manifest" href="manifest.json">
@@ -39,20 +40,50 @@
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
+
 <body>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script>
-    window.addEventListener('load', function(ev) {
+    import { getAuth } from "firebase/auth";
+    import { initializeApp } from "firebase/app";
+    import { getFirestore } from "firebase/firestore";
+    import { getStorage } from "firebase/storage";
+
+
+    var firebaseConfig = {
+      apiKey: "AIzaSyDCXc5lclocm3RLaJwGBc88x-Lj07IJ6So",
+      authDomain: "laporin-89b57.firebaseapp.com",
+      databaseURL: "https://laporin-89b57-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "laporin-89b57",
+      storageBucket: "laporin-89b57.appspot.com",
+      messagingSenderId: "643979588576",
+      appId: "1:643979588576:web:b6db9b9cf4a58e87317185",
+      measurementId: "G-8FTFERTNRD"
+    };
+    const storage = getStorage(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <script src="main.dart.js" type="application/javascript"></script>
+  <script>
+    window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         }
-      }).then(function(engineInitializer) {
+      }).then(function (engineInitializer) {
         return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
+      }).then(function (appRunner) {
         return appRunner.runApp();
       });
     });
   </script>
 </body>
+
 </html>

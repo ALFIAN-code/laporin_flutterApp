@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lapor_in/pages/admin/admin_dasboard.dart';
-import 'package:lapor_in/pages/admin/petugas_dasboard.dart';
-import 'package:lapor_in/pages/user/home_page.dart';
 import 'package:shimmer/shimmer.dart';
+
+import 'admin/admin_dasboard.dart';
+import 'admin/petugas_dasboard.dart';
+import 'user/home_page.dart';
 
 class PageManager extends StatefulWidget {
   const PageManager({super.key});

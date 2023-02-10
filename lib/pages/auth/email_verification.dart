@@ -4,11 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lapor_in/component/error_dialog.dart';
-import 'package:lapor_in/component/my_button.dart';
-import 'package:lapor_in/component/utils.dart';
-import 'package:lapor_in/pages/page_manager.dart';
-import 'package:lapor_in/pages/theme/style.dart';
+import '../../../component/error_dialog.dart';
+import '../../../component/my_button.dart';
+import '../../../component/utils.dart';
+import '../page_manager.dart';
+import '../theme/style.dart';
 
 class EmailVerification extends StatefulWidget {
   const EmailVerification({super.key});

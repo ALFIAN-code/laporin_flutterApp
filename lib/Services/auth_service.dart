@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:lapor_in/component/utils.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import '../component/utils.dart';
 
 class AuthService extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -12,7 +12,7 @@ class AuthService extends ChangeNotifier {
   var navigatorkey = GlobalKey<NavigatorState>();
 
   Future signInWithGoogle(BuildContext context) async {
-    var hasInternet = await InternetConnectionChecker().hasConnection;
+    var hasInternet = await InternetConnectionCheckerPlus().hasConnection;
 
     if (hasInternet) {
       try {
@@ -55,7 +55,7 @@ class AuthService extends ChangeNotifier {
   }
 
   googleLogout() async {
-    var hasInternet = await InternetConnectionChecker().hasConnection;
+    var hasInternet = await InternetConnectionCheckerPlus().hasConnection;
     if (await googleSignIn.isSignedIn()) {
       if (hasInternet) {
         await googleSignIn.disconnect();

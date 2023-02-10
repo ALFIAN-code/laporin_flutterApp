@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/utils.dart';
-import 'package:lapor_in/pages/auth/auth_page.dart';
 import 'package:lapor_in/pages/auth/forgot_password_page.dart';
 import 'package:lapor_in/pages/admin/admin_dasboard.dart';
 import 'package:lapor_in/pages/admin/petugas_dasboard.dart';
 import 'package:lapor_in/pages/user/add_laporan.dart';
 import 'package:lapor_in/pages/user/lengkapi_data.dart';
+import 'auth_page.dart';
 import 'pages/user/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -16,6 +16,7 @@ void main(List<String> args) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         PetugasDashboard.routesName: (context) => const PetugasDashboard(),
         AdminDashboard.routesName: (context) => const AdminDashboard(),
         AddLaporan.routesName: (context) => const AddLaporan(),
-        LengkapiData.routesName: (context) => LengkapiData()
+        LengkapiData.routesName: (context) => const LengkapiData()
       },
     );
   }

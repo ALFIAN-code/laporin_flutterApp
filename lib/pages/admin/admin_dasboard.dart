@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lapor_in/Services/auth_service.dart';
-import 'package:lapor_in/pages/auth/auth_page.dart';
+
+import '../../../auth_page.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});

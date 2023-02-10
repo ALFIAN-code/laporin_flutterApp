@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lapor_in/Services/auth_service.dart';
-import 'package:lapor_in/component/laporan_componen.dart';
-import 'package:lapor_in/pages/auth/auth_page.dart';
-import 'package:lapor_in/pages/theme/style.dart';
-import 'package:lapor_in/pages/user/add_laporan.dart';
-import 'package:lapor_in/pages/user/lengkapi_data.dart';
+import '../../../component/laporan_componen.dart';
+import '../../auth_page.dart';
+import '../theme/style.dart';
+import 'add_laporan.dart';
+import 'lengkapi_data.dart';
 // import 'package:lapor_in/pages/theme/style.dart';
 
 class HomePage extends StatefulWidget {

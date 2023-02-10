@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lapor_in/pages/theme/style.dart';
+import '../pages/theme/style.dart';
 
 class MyTextField extends StatelessWidget {
   final String hint;

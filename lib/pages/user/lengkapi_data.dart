@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lapor_in/component/my_button.dart';
-import 'package:lapor_in/component/utils.dart';
-import 'package:lapor_in/pages/theme/style.dart';
-import 'package:lapor_in/pages/user/home_page.dart';
-
-import '../../component/text_field.dart';
+import '../../../component/my_button.dart';
+import '../../../component/text_field.dart';
+import '../../../component/utils.dart';
+import '../theme/style.dart';
+import 'home_page.dart';
 // import 'package:lapor_in/component/text_field.dart';
 
 class LengkapiData extends StatefulWidget {

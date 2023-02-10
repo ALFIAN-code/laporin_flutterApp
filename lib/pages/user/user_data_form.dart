@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lapor_in/component/error_dialog.dart';
-import 'package:lapor_in/pages/user/home_page.dart';
-import '../../component/my_button.dart';
-import '../../component/text_field.dart';
+import '../../../component/error_dialog.dart';
+import '../../../component/my_button.dart';
+import '../../../component/text_field.dart';
 import '../theme/style.dart';
+import 'home_page.dart';
 
 class UserDataForm extends StatefulWidget {
   const UserDataForm({super.key});
