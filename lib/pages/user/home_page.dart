@@ -4,15 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:lapor_in/Services/auth_service.dart';
 import 'package:lapor_in/component/error_dialog.dart';
-import 'package:lapor_in/pages/user/get_lapporan_data.dart';
-import '../../auth_page.dart';
+import 'package:lapor_in/component/laporan_componen.dart';
+import '../../component/utils.dart';
 import '../theme/style.dart';
 import 'add_laporan.dart';
 import 'lengkapi_data.dart';
-// import 'package:lapor_in/pages/theme/style.dart';
 
 class HomePage extends StatefulWidget {
   static String routesName = '/homepage';
@@ -23,51 +20,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // var currentUser = FirebaseAuth.instance.currentUser;
   bool isDataComplete = false;
   String fullname = '';
   String userId = '';
-  // ignore: prefer_typing_uninitialized_variables
-  var hasInternet = true;
-  List<String> laporanId = [];
-
-  void isConnected() {
-    InternetConnectionCheckerPlus.createInstance()
-        .onStatusChange
-        .listen((status) {
-      if (status == InternetConnectionStatus.disconnected) {
-        hasInternet = false;
-      } else if (status == InternetConnectionStatus.connected) {
-        hasInternet = true;
-      }
-    });
-  }
-
-  void getLaporanId() async {
-    List<String> data = [];
-    User? user = FirebaseAuth.instance.currentUser;
-    if (hasInternet) {
-      await FirebaseFirestore.instance
-          .collection('laporan')
-          .where('id_pelapor', isEqualTo: user!.uid)
-          .get()
-          // ignore: avoid_function_literals_in_foreach_calls
-          .then((snapshot) => snapshot.docs.forEach((element) {
-                // print(element.reference);
-                if (snapshot.docs.isNotEmpty) {
-                  if (!laporanId.contains(element.id)) {
-                    data.add(element.reference.id);
-                  }
-                }
-              }));
-      laporanId = data;
-    }
-  }
+  // bool hasInternet = Utils.isConnected();
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
-    isConnected();
-    getLaporanId();
     getUserData();
     super.initState();
   }
@@ -77,12 +37,9 @@ class _HomePageState extends State<HomePage> {
     String firstname =
         (fullname.split(' ').length < 2) ? fullname : fullname.split(' ').first;
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          getLaporanId();
-        });
-      },
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 2,
       child: Scaffold(
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(0),
@@ -104,12 +61,13 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(15.0),
                         child: SvgPicture.asset(
                           'lib/images/user2.svg',
+                          color: Colors.white,
                           height: 50,
                         ),
                       ),
                       title: Text(
                         fullname,
-                        style: semiBold17,
+                        style: regular17.copyWith(fontSize: 20),
                       ),
                       backgroundColor: const Color(0xffAFA1FF),
                       bottom: PreferredSize(
@@ -139,26 +97,39 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       actions: [
-                        GestureDetector(
-                          onTap: () {
-                            userSignOut(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Log Out',
-                                  style: regular12_5.copyWith(fontSize: 12),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Icon(
-                                  Icons.logout,
-                                  size: 20,
-                                ),
-                              ],
+                        // Padding(
+                        //   padding: const EdgeInsets.only(right: 20),
+                        //   child: IconButton(
+                        //       onPressed: () {
+                        //         Utils.userSignOut(context);
+                        //       },
+                        //       icon: const Icon(Icons.logout)),
+                        // )
+                        Material(
+                          borderRadius: BorderRadius.all(Radius.circular(1000)),
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Utils.userSignOut(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Log Out',
+                                    style: regular12_5.copyWith(
+                                        fontSize: 12, color: Colors.white),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  const Icon(
+                                    Icons.logout,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -305,105 +276,107 @@ class _HomePageState extends State<HomePage> {
                       ),
                       //text riwayat & tanggapan view
                       Expanded(
-                        child: DefaultTabController(
-                            initialIndex: 0,
-                            length: 2,
-                            child: Column(
-                              children: [
-                                Container(
-                                  // height: 50,
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  child: TabBar(
-                                      labelColor: Colors.grey[800],
-                                      unselectedLabelColor: Colors.grey,
-                                      indicatorColor: const Color.fromARGB(
-                                          255, 184, 140, 255),
-                                      indicatorWeight: 4,
-                                      indicatorSize: TabBarIndicatorSize.label,
-                                      isScrollable: true,
-                                      tabs: [
-                                        Tab(
-                                          child: Text(
-                                            'Riwayat',
-                                            style:
-                                                bold17.copyWith(fontSize: 15),
-                                          ),
-                                        ),
-                                        Tab(
-                                          child: Text(
-                                            'tanggapan',
-                                            style:
-                                                bold17.copyWith(fontSize: 15),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-                                Expanded(
-                                  child: TabBarView(children: [
-                                    // list riwayat laporan
-                                    (hasInternet)
-                                        ? (laporanId.isNotEmpty)
-                                            ? StreamBuilder(
-                                                builder: (context, snapshot) {
-                                                  return ListView.builder(
-                                                    itemCount: laporanId.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return Slidable(
-                                                        endActionPane: ActionPane(
-                                                            extentRatio: 0.2,
-                                                            motion:
-                                                                const DrawerMotion(),
-                                                            children: [
-                                                              SlidableAction(
-                                                                autoClose: true,
-                                                                onPressed:
-                                                                    (context) {
-                                                                  setState(() {
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'laporan')
-                                                                        .doc(laporanId[
-                                                                            index])
-                                                                        .delete();
-                                                                  });
-                                                                },
-                                                                backgroundColor:
-                                                                    const Color
-                                                                            .fromARGB(
-                                                                        255,
-                                                                        212,
-                                                                        70,
-                                                                        60),
-                                                                icon: Icons
-                                                                    .delete,
-                                                              ),
-                                                            ]),
-                                                        key: ValueKey(index),
-                                                        child: GetLaporanData(
-                                                            laporanId:
-                                                                laporanId[
-                                                                    index]),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              )
-                                            : const Center(
-                                                child: Text(
-                                                    'kamu belum membuat laporan'),
-                                              )
-                                        : const Center(
-                                            child: Text('tidak ada internet')),
-
-                                    const Center(
-                                      child: Text('tanggapan view'),
-                                    )
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 50,
+                              margin: const EdgeInsets.only(bottom: 15),
+                              child: TabBar(
+                                  labelColor: Colors.grey[800],
+                                  unselectedLabelColor: Colors.grey,
+                                  indicatorColor:
+                                      const Color.fromARGB(255, 184, 140, 255),
+                                  indicatorWeight: 4,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  isScrollable: true,
+                                  tabs: [
+                                    Tab(
+                                      child: Text(
+                                        'Riwayat',
+                                        style: bold17.copyWith(fontSize: 15),
+                                      ),
+                                    ),
+                                    Tab(
+                                      child: Text(
+                                        'tanggapan',
+                                        style: bold17.copyWith(fontSize: 15),
+                                      ),
+                                    ),
                                   ]),
+                            ),
+                            Expanded(
+                              child: TabBarView(children: [
+                                // list riwayat laporan
+
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('laporan')
+                                      .where('id_pelapor', isEqualTo: user!.uid)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.none) {
+                                      return const Center(
+                                        child: Text('err'),
+                                      );
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 20),
+                                        child: ListView.builder(
+                                          itemCount: snapshot.data?.size,
+                                          itemBuilder: (context, index) {
+                                            return Slidable(
+                                              endActionPane: ActionPane(
+                                                  extentRatio: 0.2,
+                                                  motion: const DrawerMotion(),
+                                                  children: [
+                                                    SlidableAction(
+                                                      autoClose: true,
+                                                      icon: Icons.delete,
+                                                      foregroundColor:
+                                                          const Color.fromARGB(
+                                                              255, 202, 59, 49),
+                                                      onPressed: (context) {
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'laporan')
+                                                            .doc(snapshot
+                                                                    .requireData
+                                                                    .docs[index]
+                                                                ['id_laporan'])
+                                                            .delete();
+                                                      },
+                                                    )
+                                                  ]),
+                                              child: LaporanView(
+                                                  isiLaporan: snapshot
+                                                          .requireData
+                                                          .docs[index]
+                                                      ['isi_laporan'],
+                                                  judul: snapshot.requireData
+                                                      .docs[index]['judul'],
+                                                  path: snapshot.requireData
+                                                      .docs[index]['url_image'],
+                                                  status: snapshot.requireData
+                                                      .docs[index]['status']),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                const Center(
+                                  child: Text('tanggapan view'),
                                 )
-                              ],
-                            )),
+                              ]),
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -434,53 +407,4 @@ class _HomePageState extends State<HomePage> {
       }
     });
   }
-
-  void userSignOut(BuildContext context) {
-    AuthService().googleLogout();
-    FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, AuthPage.routesName);
-  }
 }
-
-//  FutureBuilder(
-//                                   future: getLaporanId(),
-//                                   builder: (context, snapshot) {
-//                                     return Expanded(child: LayoutBuilder(
-//                                       builder: (context, constraint) {
-//                                         if (constraint.maxWidth < 700) {
-//                                           return ListView.builder(
-//                                             itemCount: laporanId.length,
-//                                             itemBuilder: (context, index) {
-//                                               return GetLaporanData(
-//                                                   laporanId: laporanId[index]);
-//                                             },
-//                                           );
-//                                         } else if (constraint.maxWidth < 1600) {
-//                                           return GridView.builder(
-//                                             gridDelegate:
-//                                                 const SliverGridDelegateWithFixedCrossAxisCount(
-//                                                     crossAxisCount: 2),
-//                                             itemCount: laporanId.length,
-//                                             itemBuilder: (context, index) {
-//                                               return GetLaporanData(
-//                                                   laporanId: laporanId[index]);
-//                                             },
-//                                           );
-//                                         } else {
-//                                           return GridView.builder(
-//                                             gridDelegate:
-//                                                 const SliverGridDelegateWithFixedCrossAxisCount(
-//                                                     crossAxisCount: 3),
-//                                             itemCount: laporanId.length,
-//                                             itemBuilder: (context, index) {
-//                                               return GetLaporanData(
-//                                                   laporanId: laporanId[index]);
-//                                             },
-//                                           );
-//                                         }
-//                                       },
-//                                     ));
-//                                   },
-//                                 )
-
-

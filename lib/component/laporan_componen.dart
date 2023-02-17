@@ -3,12 +3,22 @@ import 'package:flutter/material.dart';
 import '../pages/theme/style.dart';
 
 class LaporanView extends StatelessWidget {
-  const LaporanView({super.key});
+  const LaporanView(
+      {super.key,
+      required this.isiLaporan,
+      required this.judul,
+      required this.path,
+      required this.status});
+
+  final String isiLaporan;
+  final String path;
+  final String judul;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 130,
+      height: 110,
       child: Column(
         children: [
           Material(
@@ -20,15 +30,19 @@ class LaporanView extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        child: Image.network(
-                          'https://picsum.photos/seed/picsum/200/300',
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: (path.isNotEmpty)
+                          ? ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              child: Image.network(
+                                path,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const Center(
+                              child: Text('null'),
+                            ),
                     ),
                     const SizedBox(
                       width: 20,
@@ -44,7 +58,7 @@ class LaporanView extends StatelessWidget {
                             SizedBox(
                               width: 200,
                               child: Text(
-                                'ini adalah judul',
+                                judul,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: semiBold17.copyWith(fontSize: 15),
@@ -56,7 +70,7 @@ class LaporanView extends StatelessWidget {
                             SizedBox(
                               width: 300,
                               child: Text(
-                                'ini adalah isi laporan yang di persingkat hanya dua baris,hanya-dua-baris,cuma-dua-baris',
+                                isiLaporan,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: regular17.copyWith(fontSize: 12),
@@ -81,14 +95,28 @@ class LaporanView extends StatelessWidget {
                             height: 20,
                           ),
                           Container(
+                            width: 75,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
-                            decoration: const BoxDecoration(
-                                color: Colors.green,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
+                            decoration: BoxDecoration(
+                                color: (status == 'terkirim')
+                                    ? Colors.grey
+                                    : (status == 'diproses')
+                                        ? Colors.yellow[700]
+                                        : (status == 'selesai')
+                                            ? Colors.green
+                                            : Colors.grey,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
                             child: Text(
-                              'selesai',
+                              (status == 'terkirim')
+                                  ? 'terkirim'
+                                  : (status == 'diproses')
+                                      ? 'diproses'
+                                      : (status == 'selesai')
+                                          ? 'selesai'
+                                          : 'error',
+                              textAlign: TextAlign.center,
                               style: medium12_5.copyWith(
                                   fontSize: 12, color: Colors.white),
                             ),
@@ -101,7 +129,6 @@ class LaporanView extends StatelessWidget {
               ),
             ),
           ),
-          const Divider()
         ],
       ),
     );

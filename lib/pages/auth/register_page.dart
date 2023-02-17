@@ -36,13 +36,15 @@ class _RegisterPageState extends State<RegisterPage> {
   postDetailsToFirestore(
       {required String email,
       required String role,
-      required String password}) async {
+      required String password,
+      required String fullname}) async {
     var user = FirebaseAuth.instance.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
     ref.doc(user!.uid).set({
-      'fullname': _fullnameController.text,
-      'email': _emailController.text,
+      'fullname': fullname,
+      'email': email,
       'password': password,
+      'uid': user.uid,
       'role': role,
       'is_data_complete': false
     });
@@ -68,9 +70,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 email: _emailController.text.trim(),
                 password: _passwordController.text.trim())
             .then((value) => postDetailsToFirestore(
-                email: _emailController.text,
-                password: _passwordController.text,
-                role: 'user'));
+                  email: _emailController.text,
+                  fullname: _fullnameController.text,
+                  password: _passwordController.text,
+                  role: 'user',
+                ));
       }
 
       // ignore: use_build_context_synchronously

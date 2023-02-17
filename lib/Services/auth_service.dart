@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import '../component/error_dialog.dart';
 import '../component/utils.dart';
 
 class AuthService extends ChangeNotifier {
@@ -12,49 +13,42 @@ class AuthService extends ChangeNotifier {
   var navigatorkey = GlobalKey<NavigatorState>();
 
   Future signInWithGoogle(BuildContext context) async {
-    var hasInternet = await InternetConnectionCheckerPlus().hasConnection;
-
-    if (hasInternet) {
-      try {
-        // ignore: use_build_context_synchronously
-        showDialog(
-            context: context,
-            builder: (context) {
-              return const Center(
-                child: RefreshProgressIndicator(
-                  color: Color(0xff8CCD00),
-                ),
-              );
-            });
-
-        final googleUser = await googleSignIn
-            .signIn()
-            .catchError((onError) => Utils.showSnackBar(onError));
-        if (googleUser == null) return;
-        _user = googleUser;
-
-        final googleAuth = await googleUser.authentication;
-
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        await FirebaseAuth.instance
-            .signInWithCredential(credential)
-            .catchError((onError) => Utils.showSnackBar(onError));
-        // ignore: use_build_context_synchronously
-        Navigator.pop(context);
-      } catch (e) {
-        Utils.showSnackBar(e.toString());
-      }
-    } else {
+    try {
       // ignore: use_build_context_synchronously
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(
+              child: RefreshProgressIndicator(
+                color: Color(0xff8CCD00),
+              ),
+            );
+          });
+
+      final googleUser = await googleSignIn
+          .signIn()
+          .catchError((onError) => Utils.showSnackBar(onError));
+      if (googleUser == null) return;
+      _user = googleUser;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
       Navigator.pop(context);
-      Utils.showSnackBar('yahhh gak ada internet');
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      errorDialog(
+          title: e.code, content: e.message.toString(), context: context);
+      // print(e.message as String);
     }
   }
 
-  googleLogout() async {
+  void googleLogout() async {
     var hasInternet = await InternetConnectionCheckerPlus().hasConnection;
     if (await googleSignIn.isSignedIn()) {
       if (hasInternet) {

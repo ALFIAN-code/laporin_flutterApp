@@ -10,6 +10,7 @@ import 'package:lapor_in/component/utils.dart';
 
 import '../../component/my_button.dart';
 import '../theme/style.dart';
+import 'home_page.dart';
 
 class AddLaporan extends StatefulWidget {
   static String routesName = '/addLaporan';
@@ -31,89 +32,10 @@ class _AddLaporanState extends State<AddLaporan> {
   int telp = 0;
   int nik = 0;
 
+  DateTime now = DateTime.now();
+
   User? currentUser = FirebaseAuth.instance.currentUser;
   String laporanId = Random().nextInt(99999).toString();
-
-  Future<void> _getImage() async {
-    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      pickedImage = image;
-    });
-    print('lokasi gambar : ${pickedImage!.path}');
-    // print('nama gambar : ${pickedImage!.name}');
-  }
-
-  void getUserData() {
-    User? user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .snapshots()
-        .listen((userData) {
-      setState(() {
-        fullname = userData.data()!['fullname'];
-        nik = userData.data()!['nik'];
-        telp = userData.data()!['telp'];
-      });
-    });
-    print('$fullname $nik $telp');
-  }
-
-  @override
-  void initState() {
-    // getUserData();
-    super.initState();
-  }
-
-  void uploadImage() async {
-    getUserData();
-    if (pickedImage == null) return;
-    Reference refrenceRoot = FirebaseStorage.instance.ref();
-    Reference refrenceDirImage =
-        refrenceRoot.child('laporan/${currentUser!.email}');
-
-    Reference refrengeImageToUpload = refrenceDirImage.child(uniqueCode);
-    try {
-      await refrengeImageToUpload.putFile(File(pickedImage!.path));
-      imageUrl = await refrengeImageToUpload.getDownloadURL();
-
-      print('ini adalah link download : $imageUrl');
-    } catch (e) {
-      Utils.showSnackBar(e.toString());
-    }
-  }
-
-  Future<void> uploadLaporan() async {
-    if (imageUrl.isEmpty) {
-      Utils.showSnackBar('upload gambar terlebih dahulu');
-    } else if (_judulController.text.isEmpty ||
-        _alamatController.text.isEmpty ||
-        _deskripsiController.text.isEmpty) {
-      Utils.showSnackBar('field tidak boleh kosong');
-    } else {
-      try {
-        await FirebaseFirestore.instance
-            .collection('laporan')
-            .doc(laporanId)
-            .set({
-          'url_image': imageUrl,
-          'nama_pelapor': fullname,
-          'id_pelapor': currentUser!.uid,
-          'id_laporan': laporanId,
-          'nik_pelapor': nik,
-          'telp': telp,
-          'judul': _judulController.text,
-          'alamat': _alamatController.text,
-          'isi_laporan': _deskripsiController.text
-        });
-        // ignore: use_build_context_synchronously
-        Navigator.pop(context);
-      } on Exception catch (e) {
-        Navigator.pop(context);
-        Utils.showSnackBar(e.toString());
-      }
-    }
-  }
 
   final TextEditingController _judulController = TextEditingController();
   final TextEditingController _alamatController = TextEditingController();
@@ -309,6 +231,84 @@ class _AddLaporanState extends State<AddLaporan> {
         ),
       ),
     );
+  }
+
+  Future<void> _getImage() async {
+    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      pickedImage = image;
+    });
+    // print('lokasi gambar : ${pickedImage!.path}');
+    // print('nama gambar : ${pickedImage!.name}');
+  }
+
+  void getUserData() {
+    User? user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        fullname = userData.data()!['fullname'];
+        nik = userData.data()!['nik'];
+        telp = userData.data()!['telp'];
+      });
+    });
+    print('$fullname $nik $telp');
+  }
+
+  void uploadImage() async {
+    getUserData();
+    if (pickedImage == null) return;
+    Reference refrenceRoot = FirebaseStorage.instance.ref();
+    Reference refrenceDirImage =
+        refrenceRoot.child('laporan/${currentUser!.email}');
+
+    Reference refrengeImageToUpload = refrenceDirImage.child(uniqueCode);
+    try {
+      await refrengeImageToUpload.putFile(File(pickedImage!.path));
+      imageUrl = await refrengeImageToUpload.getDownloadURL();
+
+      print('ini adalah link download : $imageUrl');
+    } catch (e) {
+      Utils.showSnackBar(e.toString());
+    }
+  }
+
+  Future<void> uploadLaporan() async {
+    DateTime date = DateTime(now.year, now.month, now.day);
+    if (imageUrl.isEmpty) {
+      Utils.showSnackBar('upload gambar terlebih dahulu');
+    } else if (_judulController.text.isEmpty ||
+        _alamatController.text.isEmpty ||
+        _deskripsiController.text.isEmpty) {
+      Utils.showSnackBar('field tidak boleh kosong');
+    } else {
+      try {
+        await FirebaseFirestore.instance
+            .collection('laporan')
+            .doc(laporanId)
+            .set({
+          'url_image': imageUrl,
+          'nama_pelapor': fullname,
+          'id_pelapor': currentUser!.uid,
+          'id_laporan': laporanId,
+          'tanggal': date,
+          'nik_pelapor': nik,
+          'telp': telp,
+          'judul': _judulController.text,
+          'alamat': _alamatController.text,
+          'isi_laporan': _deskripsiController.text,
+          'status': 'terkirim'
+        });
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, HomePage.routesName);
+      } on Exception catch (e) {
+        Navigator.pushReplacementNamed(context, HomePage.routesName);
+        Utils.showSnackBar(e.toString());
+      }
+    }
   }
 }
 

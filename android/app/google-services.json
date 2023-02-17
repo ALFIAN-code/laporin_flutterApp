@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "643979588576-8rad1qllrjnoooplqhg79a4c4m412s8n.apps.googleusercontent.com",
+          "client_id": "643979588576-4bmmr2ejg0pjm0p5ckgofmt7eu6mgnj8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.lapor_in",
             "certificate_hash": "e530cb09f7217232aeabdbdf6ff4542c4e5bb88b"
+          }
+        },
+        {
+          "client_id": "643979588576-u2ocpnmcd0vcfegq8hg5udl1o1ptjbvt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lapor_in",
+            "certificate_hash": "0f6583cf477a8df48363b9774df652d2e0ede396"
           }
         },
         {
@@ -40,10 +48,10 @@
               "client_type": 3
             },
             {
-              "client_id": "643979588576-m8c43fhaehur58m2go7ao706nbcdi4oq.apps.googleusercontent.com",
+              "client_id": "643979588576-e3abl48rc50n6005l9342amsd5n0hlva.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.laporIn"
+                "bundle_id": "com.example.laporinTest1"
               }
             }
           ]

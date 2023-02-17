@@ -36,7 +36,7 @@ class MyTextField extends StatelessWidget {
         // width: 300,
         child: Form(
           // key: formKey,
-          child: TextFormField(
+          child: TextField(
             textAlign: TextAlign.start,
             textAlignVertical: TextAlignVertical.bottom,
             controller: controller,
@@ -46,13 +46,14 @@ class MyTextField extends StatelessWidget {
             keyboardType: keyboardType,
             inputFormatters: inputFormater,
             textCapitalization: textCapitalization,
+            style: medium15,
             // validator: validator,
             decoration: InputDecoration(
                 fillColor: Colors.grey[200],
                 filled: true,
                 hintText: hint,
                 suffixIcon: suffix,
-                hintStyle: medium17,
+                hintStyle: medium15.copyWith(color: Colors.grey.shade500),
                 contentPadding: const EdgeInsets.all(30),
                 enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),

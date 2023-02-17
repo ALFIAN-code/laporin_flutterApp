@@ -23,9 +23,9 @@ class _EmailVerificationState extends State<EmailVerification> {
   bool canResentEmail = false;
   GoogleSignIn gUser = GoogleSignIn();
   CollectionReference ref = FirebaseFirestore.instance.collection('users');
-  var currentUser = FirebaseAuth.instance.currentUser;
 
   Future<void> isGoogleSignIn() async {
+    var currentUser = FirebaseAuth.instance.currentUser;
     if (await gUser.isSignedIn()) {
       FirebaseFirestore.instance
           .collection("users")
@@ -37,6 +37,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                     ref.doc(currentUser?.uid).set({
                       'fullname': currentUser?.displayName,
                       'email': currentUser?.email,
+                      'uid': currentUser?.uid,
                       'role': 'user',
                       'is_data_complete': false
                     })

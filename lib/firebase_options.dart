@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '643979588576',
     projectId: 'laporin-89b57',
     authDomain: 'laporin-89b57.firebaseapp.com',
+    databaseURL: 'https://laporin-89b57-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'laporin-89b57.appspot.com',
     measurementId: 'G-8FTFERTNRD',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:643979588576:android:f70571a33888747e317185',
     messagingSenderId: '643979588576',
     projectId: 'laporin-89b57',
+    databaseURL: 'https://laporin-89b57-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'laporin-89b57.appspot.com',
   );
 
@@ -66,7 +68,9 @@ class DefaultFirebaseOptions {
     appId: '1:643979588576:ios:ce2b13052d299d9e317185',
     messagingSenderId: '643979588576',
     projectId: 'laporin-89b57',
+    databaseURL: 'https://laporin-89b57-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'laporin-89b57.appspot.com',
+    androidClientId: '643979588576-4bmmr2ejg0pjm0p5ckgofmt7eu6mgnj8.apps.googleusercontent.com',
     iosClientId: '643979588576-m8c43fhaehur58m2go7ao706nbcdi4oq.apps.googleusercontent.com',
     iosBundleId: 'com.example.laporIn',
   );
@@ -76,7 +80,9 @@ class DefaultFirebaseOptions {
     appId: '1:643979588576:ios:ce2b13052d299d9e317185',
     messagingSenderId: '643979588576',
     projectId: 'laporin-89b57',
+    databaseURL: 'https://laporin-89b57-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'laporin-89b57.appspot.com',
+    androidClientId: '643979588576-4bmmr2ejg0pjm0p5ckgofmt7eu6mgnj8.apps.googleusercontent.com',
     iosClientId: '643979588576-m8c43fhaehur58m2go7ao706nbcdi4oq.apps.googleusercontent.com',
     iosBundleId: 'com.example.laporIn',
   );

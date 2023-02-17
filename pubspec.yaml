@@ -32,11 +32,14 @@ dependencies:
   cloud_firestore: ^4.3.2
   cupertino_icons: ^1.0.2
   firebase_auth: ^4.2.6
-  firebase_core: ^2.4.1
+  firebase_core: ^2.5.0
+  firebase_storage: ^11.0.11
   flutter:
     sdk: flutter
+  flutter_slidable: ^2.0.0
   flutter_svg: ^1.1.6
   google_sign_in: ^5.4.4
+  image_picker: ^0.8.6+1
   internet_connection_checker_plus: ^1.0.1
   shimmer: ^2.0.0
 

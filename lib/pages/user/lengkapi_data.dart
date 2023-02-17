@@ -94,6 +94,14 @@ class _LengkapiDataState extends State<LengkapiData> {
   }
 
   @override
+  void dispose() {
+    _alamatController.dispose();
+    _nikController.dispose();
+    _telpController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -123,7 +131,8 @@ class _LengkapiDataState extends State<LengkapiData> {
                   padding: const EdgeInsets.only(left: 40),
                   child: Text(
                     'Masukan NIK',
-                    style: bold17.copyWith(color: Colors.grey),
+                    style: bold17.copyWith(
+                        color: const Color.fromARGB(255, 82, 82, 82)),
                   ),
                 ),
               ),
@@ -148,7 +157,8 @@ class _LengkapiDataState extends State<LengkapiData> {
                   padding: const EdgeInsets.only(left: 40),
                   child: Text(
                     'Nomor Telepon',
-                    style: bold17.copyWith(color: Colors.grey),
+                    style: bold17.copyWith(
+                        color: const Color.fromARGB(255, 82, 82, 82)),
                   ),
                 ),
               ),
@@ -173,7 +183,8 @@ class _LengkapiDataState extends State<LengkapiData> {
                   padding: const EdgeInsets.only(left: 40),
                   child: Text(
                     'Masukan Alamat',
-                    style: bold17.copyWith(color: Colors.grey),
+                    style: bold17.copyWith(
+                        color: const Color.fromARGB(255, 82, 82, 82)),
                   ),
                 ),
               ),

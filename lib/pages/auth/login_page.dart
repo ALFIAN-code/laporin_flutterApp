@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lapor_in/pages/auth/desktop/login_page_desktop.dart';
 import 'package:lapor_in/pages/auth/mobile/login_page_mobile.dart';
@@ -22,10 +21,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   var navigatorkey = GlobalKey<NavigatorState>();
 
-  bool _hidePassword = true;
-  // final Key _emailFormKey = GlobalKey<FormState>();
-  // final Key _passwordFormKey = GlobalKey<FormState>();
-  var hasConnection = InternetConnectionCheckerPlus().hasConnection;
+  final bool _hidePassword = true;
+  bool hasInternet = true;
+
+  @override
+  void initState() {
+    hasInternet = Utils.isConnected();
+    super.initState();
+  }
 
   void userSignIn() async {
     showDialog(
@@ -67,8 +70,9 @@ class _LoginPageState extends State<LoginPage> {
       } else if (_passwordController.text.isEmpty) {
         errorDialog(
             title: 'password cannot be empty', content: '', context: context);
-      } else if (await hasConnection) {
-        Utils.showSnackBar('tidak ada internet');
+      } else {
+        errorDialog(
+            title: e.code, content: e.message.toString(), context: context);
       }
     }
   }
@@ -84,16 +88,19 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return ResponsiveLayout(
         mobileScafold: LoginPageMobile(
+            userSignIn: userSignIn,
             emailController: _emailController,
             hidePassword: _hidePassword,
             passwordController: _passwordController,
             onTap: widget.onTap),
         tabletScafold: LoginPageMobile(
+            userSignIn: userSignIn,
             emailController: _emailController,
             hidePassword: _hidePassword,
             passwordController: _passwordController,
             onTap: widget.onTap),
         desktopScafold: LoginScreenDesktop(
+            userSignIn: userSignIn,
             emailController: _emailController,
             hidePassword: _hidePassword,
             passwordController: _passwordController,
