@@ -24,41 +24,41 @@ class _DashboardState extends State<Dashboard> {
 
   bool hasInternet = Utils.isConnected();
   bool isDataComplete = false;
-  String fullname = '';
-  String role = '';
+  UserData userData = UserData();
+
+  var uid = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
-    setFullname();
+    // setFullname();
+    // getUserData();
+    userData.get(uid);
     super.initState();
   }
 
-  Future getStatus() async {
-    role = await Utils.getUserStatus();
-    print('statusnya adalah $role');
-  }
+  // Future getStatus() async {
+  //   role = await Utils.getUserStatus();
+  // }
 
-  setFullname() async {
-    fullname = await getUserData();
-  }
+  // setFullname() async {
+  //   fullname = await getUserData();
+  // }
 
-  Future<String> getUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    String data = '';
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .get()
-        .then((DocumentSnapshot document) {
-      data = document.get('fullname');
-    });
-    return data;
-  }
+  // Future<String> getUserData() async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   String data = '';
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(user?.uid)
+  //       .get()
+  //       .then((DocumentSnapshot document) {});
+  //   return data;
+  // }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(0),
@@ -90,34 +90,32 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                       FutureBuilder(
-                        future: getUserData(),
+                        future: userData.get(uid),
                         builder: (context, snapshot) {
                           return Text(
-                            fullname,
+                            userData.fullname,
                             style: bold17.copyWith(
                                 color: Colors.grey[800], fontSize: 20),
                           );
                         },
                       ),
                       FutureBuilder(
-                        future: getStatus(),
+                        future: userData.get(uid),
                         builder: (context, snapshot) => Text(
-                          ' ($role)',
+                          ' (${userData.role})',
                           style: regular15.copyWith(color: Colors.grey[800]),
                         ),
                       ),
                     ],
                   ),
                   actions: [
-                    IconButton(
-                        onPressed: () {
-                          Utils.userSignOut(context);
-                        },
-                        icon: const Icon(Icons.logout)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: SvgPicture.asset(
-                        'lib/images/menu.svg',
+                    GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: SvgPicture.asset(
+                          'lib/images/menu.svg',
+                        ),
                       ),
                     ),
                   ],
@@ -177,9 +175,9 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   FutureBuilder(
-                    future: getStatus(),
+                    future: userData.get(uid),
                     builder: (context, snapshot) {
-                      return (role.contains('admin'))
+                      return (userData.role.contains('admin'))
                           ? Padding(
                               padding: const EdgeInsets.fromLTRB(25, 30, 25, 0),
                               child: Material(
@@ -246,6 +244,12 @@ class _DashboardState extends State<Dashboard> {
                               style: bold17.copyWith(fontSize: 15),
                             ),
                           ),
+                          Tab(
+                            child: Text(
+                              'Riwayat',
+                              style: bold17.copyWith(fontSize: 15),
+                            ),
+                          ),
                         ]),
                   ),
                   Expanded(
@@ -280,45 +284,85 @@ class _DashboardState extends State<Dashboard> {
                           }
                         },
                       ),
-                      StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('laporan')
-                            .where('status', isEqualTo: 'diproses')
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: Text('loading...'),
-                            );
-                          } else if (snapshot.hasData) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 20),
-                              child: ListView.builder(
-                                itemCount: snapshot.data?.size,
-                                itemBuilder: (context, index) {
-                                  return LaporanView(
-                                      isiLaporan: snapshot.requireData
-                                          .docs[index]['isi_laporan'],
-                                      judul: snapshot.requireData.docs[index]
-                                          ['judul'],
-                                      path: snapshot.requireData.docs[index]
-                                          ['url_image'],
-                                      status: snapshot.requireData.docs[index]
-                                          ['status']);
-                                },
-                              ),
-                            );
-                          } else {
-                            return const Center(
-                              child: Text('tidak ada data'),
-                            );
-                          }
-                        },
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('laporan')
+                              .where('status', isEqualTo: 'diproses')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text('loading...'),
+                              );
+                            } else if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 20),
+                                child: ListView.builder(
+                                  itemCount: snapshot.data?.size,
+                                  itemBuilder: (context, index) {
+                                    return LaporanView(
+                                        isiLaporan: snapshot.requireData
+                                            .docs[index]['isi_laporan'],
+                                        judul: snapshot.requireData.docs[index]
+                                            ['judul'],
+                                        path: snapshot.requireData.docs[index]
+                                            ['url_image'],
+                                        status: snapshot.requireData.docs[index]
+                                            ['status']);
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text('tidak ada data'),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('tanggapan')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text('loading...'),
+                              );
+                            } else if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 20),
+                                child: ListView.builder(
+                                  itemCount: snapshot.data?.size,
+                                  itemBuilder: (context, index) {
+                                    return LaporanView(
+                                        isiLaporan: snapshot.requireData
+                                            .docs[index]['isi_laporan'],
+                                        judul: snapshot.requireData.docs[index]
+                                            ['judul'],
+                                        path: snapshot.requireData.docs[index]
+                                            ['url_image'],
+                                        status: snapshot.requireData.docs[index]
+                                            ['status']);
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text('tidak ada data'),
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ]),
-                  )
+                  ),
                 ],
               ),
             )),

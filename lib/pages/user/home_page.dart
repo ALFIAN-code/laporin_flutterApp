@@ -21,21 +21,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isDataComplete = false;
-  String fullname = '';
-  String userId = '';
+  UserData userData = UserData();
   // bool hasInternet = Utils.isConnected();
-  User? user = FirebaseAuth.instance.currentUser;
+  String? uid = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
-    getUserData();
+    userData.get(uid);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String firstname =
-        (fullname.split(' ').length < 2) ? fullname : fullname.split(' ').first;
+    String firstname = (userData.fullname.split(' ').length < 2)
+        ? userData.fullname
+        : userData.fullname.split(' ').first;
 
     return DefaultTabController(
       initialIndex: 0,
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       title: Text(
-                        fullname,
+                        userData.fullname,
                         style: regular17.copyWith(fontSize: 20),
                       ),
                       backgroundColor: const Color(0xffAFA1FF),
@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                                 StreamBuilder(
                                   stream: FirebaseFirestore.instance
                                       .collection('laporan')
-                                      .where('id_pelapor', isEqualTo: user!.uid)
+                                      .where('id_pelapor', isEqualTo: uid)
                                       .snapshots(),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
@@ -385,26 +385,5 @@ class _HomePageState extends State<HomePage> {
             ],
           )),
     );
-  }
-
-  var userData = FirebaseFirestore.instance
-      .collection("users")
-      .doc(FirebaseAuth.instance.currentUser?.uid)
-      .snapshots();
-
-  void getUserData() {
-    User? user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .snapshots()
-        .listen((userData) {
-      if (mounted) {
-        setState(() {
-          isDataComplete = userData.data()!['is_data_complete'];
-          fullname = userData.data()!['fullname'];
-        });
-      }
-    });
   }
 }

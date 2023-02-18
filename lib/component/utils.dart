@@ -34,29 +34,34 @@ class Utils {
     AuthService().googleLogout();
     FirebaseAuth.instance.signOut();
   }
+}
 
-  static Future<String> getUserStatus() async {
-    final user = FirebaseAuth.instance.currentUser;
-    return await FirebaseFirestore.instance
+class UserData {
+  String role = '';
+  String fullname = '';
+  String alamat = '';
+  int nik = 0;
+  String email = '';
+  int telp = 0;
+  String uid = '';
+
+  Future get(String? uid) async {
+    await FirebaseFirestore.instance
         .collection('users')
-        .doc(user!.uid)
+        .doc(uid)
         .get()
         .then((DocumentSnapshot document) {
-      String status = '';
       if (document.exists) {
-        if (document.get('role') == "admin") {
-          status = 'admin';
-        } else if (document.get('role') == "petugas") {
-          status = 'petugas';
-        } else if (document.get('role') == "user") {
-          status = 'user';
-        } else {
-          status = 'error';
-        }
+        role = document.get('role');
+        fullname = document.get('fullname');
+        alamat = document.get('alamat');
+        nik = document.get('nik');
+        email = document.get('email');
+        telp = document.get('telp');
+        uid = document.get('uid');
       } else {
         print('user tidak ditemukan');
       }
-      return status;
     });
   }
 }
