@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/firebase_options.dart';
+import 'package:lapor_in/pages/admin/add_petugas.dart';
 import 'package:lapor_in/pages/admin/laporan_selseai.dart';
 import 'package:lapor_in/pages/admin/list_petugas_page.dart';
 import 'package:lapor_in/pages/auth/forgot_password_page.dart';
@@ -58,7 +59,8 @@ class MyApp extends StatelessWidget {
         AddLaporan.routesName: (context) => const AddLaporan(),
         LengkapiData.routesName: (context) => const LengkapiData(),
         LaporanSelesai.routesName: (context) => const LaporanSelesai(),
-        PetugasView.routesName: (context) => const PetugasView()
+        PetugasView.routesName: (context) => const PetugasView(),
+        AddPetugas.routesName: (context) => const AddPetugas()
       },
     );
   }

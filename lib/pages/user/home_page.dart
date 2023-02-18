@@ -65,9 +65,12 @@ class _HomePageState extends State<HomePage> {
                           height: 50,
                         ),
                       ),
-                      title: Text(
-                        userData.fullname,
-                        style: regular17.copyWith(fontSize: 20),
+                      title: FutureBuilder(
+                        future: userData.get(uid),
+                        builder: (context, snapshot) => Text(
+                          userData.fullname,
+                          style: regular17.copyWith(fontSize: 20),
+                        ),
                       ),
                       backgroundColor: const Color(0xffAFA1FF),
                       bottom: PreferredSize(
@@ -79,11 +82,16 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'hallo $firstname',
-                                maxLines: 1,
-                                style: regular17.copyWith(
-                                    color: Colors.white, fontSize: 24),
+                              FutureBuilder(
+                                future: userData.get(uid),
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    'hallo $firstname',
+                                    maxLines: 1,
+                                    style: regular17.copyWith(
+                                        color: Colors.white, fontSize: 24),
+                                  );
+                                },
                               ),
                               // const SizedBox(
                               //   height: 10,
@@ -97,16 +105,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       actions: [
-                        // Padding(
-                        //   padding: const EdgeInsets.only(right: 20),
-                        //   child: IconButton(
-                        //       onPressed: () {
-                        //         Utils.userSignOut(context);
-                        //       },
-                        //       icon: const Icon(Icons.logout)),
-                        // )
                         Material(
-                          borderRadius: BorderRadius.all(Radius.circular(1000)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(1000)),
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {

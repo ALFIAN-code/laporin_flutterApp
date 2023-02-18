@@ -50,15 +50,12 @@ class UserData {
         .collection('users')
         .doc(uid)
         .get()
-        .then((DocumentSnapshot document) {
+        .then((document) {
       if (document.exists) {
-        role = document.get('role');
-        fullname = document.get('fullname');
-        alamat = document.get('alamat');
-        nik = document.get('nik');
-        email = document.get('email');
-        telp = document.get('telp');
-        uid = document.get('uid');
+        role = document.data()!['role'];
+        fullname = document.data()!['fullname'];
+        email = document.data()!['email'];
+        uid = document.data()!['uid'];
       } else {
         print('user tidak ditemukan');
       }
