@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 
 import '../../component/laporan_componen.dart';
@@ -49,6 +50,10 @@ class LaporanSelesai extends StatelessWidget {
               child: ListView.builder(
                 itemCount: snapshot.data?.size,
                 itemBuilder: (context, index) {
+                  var timeStamp =
+                      (snapshot.data?.docs[index]['tanggal'] as Timestamp)
+                          .toDate();
+
                   return Slidable(
                     endActionPane: ActionPane(
                         extentRatio: 0.2,
@@ -69,6 +74,8 @@ class LaporanSelesai extends StatelessWidget {
                           )
                         ]),
                     child: LaporanView(
+                        tanggal: DateFormat('kk:mm').format(timeStamp),
+                        time: DateFormat('dd MMMM yyyy').format(timeStamp),
                         isiLaporan: snapshot.requireData.docs[index]
                             ['isi_laporan'],
                         judul: snapshot.requireData.docs[index]['judul'],

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/pages/admin/laporan_selseai.dart';
 import 'package:lapor_in/pages/admin/list_petugas_page.dart';
@@ -109,15 +110,14 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
                   actions: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: SvgPicture.asset(
-                          'lib/images/menu.svg',
-                        ),
-                      ),
-                    ),
+                    IconButton(
+                        onPressed: () {
+                          Utils.userSignOut(context);
+                        },
+                        icon: Icon(
+                          Icons.logout,
+                          color: Colors.grey[800],
+                        ))
                   ],
                 )
               ];
@@ -269,7 +269,14 @@ class _DashboardState extends State<Dashboard> {
                               child: ListView.builder(
                                 itemCount: snapshot.data?.size,
                                 itemBuilder: (context, index) {
+                                  var timeStamp = (snapshot.data?.docs[index]
+                                          ['tanggal'] as Timestamp)
+                                      .toDate();
                                   return LaporanView(
+                                      tanggal:
+                                          DateFormat('kk:mm').format(timeStamp),
+                                      time: DateFormat('dd MMMM yyyy')
+                                          .format(timeStamp),
                                       isiLaporan: snapshot.requireData
                                           .docs[index]['isi_laporan'],
                                       judul: snapshot.requireData.docs[index]
@@ -303,7 +310,14 @@ class _DashboardState extends State<Dashboard> {
                                 child: ListView.builder(
                                   itemCount: snapshot.data?.size,
                                   itemBuilder: (context, index) {
+                                    var timeStamp = (snapshot.data?.docs[index]
+                                            ['tanggal'] as Timestamp)
+                                        .toDate();
                                     return LaporanView(
+                                        tanggal: DateFormat('kk:mm')
+                                            .format(timeStamp),
+                                        time: DateFormat('dd MMMM yyyy')
+                                            .format(timeStamp),
                                         isiLaporan: snapshot.requireData
                                             .docs[index]['isi_laporan'],
                                         judul: snapshot.requireData.docs[index]
@@ -341,7 +355,15 @@ class _DashboardState extends State<Dashboard> {
                                 child: ListView.builder(
                                   itemCount: snapshot.data?.size,
                                   itemBuilder: (context, index) {
+                                    var timeStamp = snapshot.requireData
+                                        .docs[index]['tanggal'] as Timestamp;
+                                    DateTime dateTime = timeStamp.toDate();
+                                    var dateString =
+                                        DateFormat('K:mm:ss').format(dateTime);
+
                                     return LaporanView(
+                                        tanggal: '166',
+                                        time: dateString,
                                         isiLaporan: snapshot.requireData
                                             .docs[index]['isi_laporan'],
                                         judul: snapshot.requireData.docs[index]

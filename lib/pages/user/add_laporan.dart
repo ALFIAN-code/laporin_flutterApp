@@ -277,7 +277,8 @@ class _AddLaporanState extends State<AddLaporan> {
   }
 
   Future<void> uploadLaporan() async {
-    DateTime date = DateTime(now.year, now.month, now.day);
+    DateTime date = DateTime(
+        now.year, now.month, now.day, now.hour, now.minute, now.second);
     if (imageUrl.isEmpty) {
       Utils.showSnackBar('upload gambar terlebih dahulu');
     } else if (_judulController.text.isEmpty ||

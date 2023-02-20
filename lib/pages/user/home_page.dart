@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:lapor_in/component/error_dialog.dart';
 import 'package:lapor_in/component/laporan_componen.dart';
+import 'package:lapor_in/pages/user/detail_laporan.dart';
 import '../../component/utils.dart';
 import '../theme/style.dart';
 import 'add_laporan.dart';
@@ -20,7 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isDataComplete = false;
   UserData userData = UserData();
   // bool hasInternet = Utils.isConnected();
   String? uid = FirebaseAuth.instance.currentUser?.uid;
@@ -36,7 +37,6 @@ class _HomePageState extends State<HomePage> {
     String firstname = (userData.fullname.split(' ').length < 2)
         ? userData.fullname
         : userData.fullname.split(' ').first;
-
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                             onTap: () {
-                              if (isDataComplete) {
+                              if (userData.isDataComplete) {
                                 Navigator.pushNamed(
                                     context, AddLaporan.routesName);
                               } else {
@@ -227,52 +227,59 @@ class _HomePageState extends State<HomePage> {
                                 // Navigator.pushNamed(
                                 //     context, LengkapiData.routesName);
                               },
-                              child: isDataComplete
-                                  ? Container()
-                                  : Container(
-                                      height: 110,
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          40, 12, 20, 12),
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xffFF0000)
-                                              .withAlpha(130),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(20))),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            // mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                              child: FutureBuilder(
+                                future: userData.get(uid),
+                                builder: (context, snapshot) {
+                                  return userData.isDataComplete
+                                      ? Container()
+                                      : Container(
+                                          height: 110,
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              40, 12, 20, 12),
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xffFF0000)
+                                                  .withAlpha(130),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(20))),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                'Lengkapi data anda',
-                                                style: bold17.copyWith(
-                                                    fontSize: 18,
-                                                    color: const Color(
-                                                        0xff363636)),
+                                              Column(
+                                                // mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    'Lengkapi data anda',
+                                                    style: bold17.copyWith(
+                                                        fontSize: 18,
+                                                        color: const Color(
+                                                            0xff363636)),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 190,
+                                                    child: Text(
+                                                        'agar laporan anda bisa di eksekusi dengan baik',
+                                                        maxLines: 2,
+                                                        style: regular15),
+                                                  ),
+                                                ],
                                               ),
-                                              SizedBox(
-                                                width: 190,
-                                                child: Text(
-                                                    'agar laporan anda bisa di eksekusi dengan baik',
-                                                    maxLines: 2,
-                                                    style: regular15),
-                                              ),
+                                              const Icon(
+                                                Icons.report_problem,
+                                                size: 50,
+                                              )
                                             ],
                                           ),
-                                          const Icon(
-                                            Icons.report_problem,
-                                            size: 50,
-                                          )
-                                        ],
-                                      ),
-                                    )),
+                                        );
+                                },
+                              )),
                         ),
                       ),
                       //text riwayat & tanggapan view
@@ -329,6 +336,11 @@ class _HomePageState extends State<HomePage> {
                                         child: ListView.builder(
                                           itemCount: snapshot.data?.size,
                                           itemBuilder: (context, index) {
+                                            var timeStamp = (snapshot
+                                                        .data?.docs[index]
+                                                    ['tanggal'] as Timestamp)
+                                                .toDate();
+
                                             return Slidable(
                                               endActionPane: ActionPane(
                                                   extentRatio: 0.2,
@@ -354,6 +366,17 @@ class _HomePageState extends State<HomePage> {
                                                     )
                                                   ]),
                                               child: LaporanView(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        DetailLaporan
+                                                            .routeName);
+                                                  },
+                                                  tanggal:
+                                                      DateFormat('dd MMMM yyyy')
+                                                          .format(timeStamp),
+                                                  time: DateFormat('kk:mm')
+                                                      .format(timeStamp),
                                                   isiLaporan: snapshot
                                                           .requireData
                                                           .docs[index]

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/pages/responsive_layout.dart';
+
 import '../../../component/error_dialog.dart';
 import '../../../component/my_button.dart';
 import '../../../component/text_field.dart';
@@ -129,7 +130,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   context: context);
             }
           },
-          color: canResentEmail ? Color(0xffFF8515) : Colors.grey,
+          color: canResentEmail ? const Color(0xffFF8515) : Colors.grey,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -186,7 +187,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     context: context);
               }
             },
-            color: canResentEmail ? Color(0xffFF8515) : Colors.grey,
+            color: canResentEmail ? const Color(0xffFF8515) : Colors.grey,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

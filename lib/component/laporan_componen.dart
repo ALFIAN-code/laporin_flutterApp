@@ -5,16 +5,21 @@ import '../pages/theme/style.dart';
 class LaporanView extends StatelessWidget {
   const LaporanView(
       {super.key,
+      this.onTap,
       required this.isiLaporan,
       required this.judul,
       required this.path,
-      required this.status});
+      required this.status,
+      required this.time,
+      required this.tanggal});
 
   final String isiLaporan;
   final String path;
   final String judul;
   final String status;
-
+  final void Function()? onTap;
+  final String time;
+  final String tanggal;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -24,7 +29,7 @@ class LaporanView extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {},
+              onTap: onTap,
               child: Expanded(
                 child: Row(
                   children: [
@@ -79,7 +84,7 @@ class LaporanView extends StatelessWidget {
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('19 Mei 2022'),
+                            Text(tanggal),
                           ],
                         ),
                       ),
@@ -90,7 +95,7 @@ class LaporanView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          const Text('17:45'),
+                          Text(time),
                           const SizedBox(
                             height: 20,
                           ),

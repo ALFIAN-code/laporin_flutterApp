@@ -109,26 +109,29 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                         },
                       ),
                     )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: deviceHeight * 0.005,
-                          horizontal: deviceWidth * 0.08),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                              context, ForgotPasswordPage.routesName);
-                        },
-                        child: Text('Forgot Password?',
-                            style: regular15.copyWith(
-                              color: Colors.grey[600],
-                            )),
-                      ),
-                    ),
-                  ],
+                const SizedBox(
+                  height: 20,
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     Padding(
+                //       padding: EdgeInsets.symmetric(
+                //           vertical: deviceHeight * 0.005,
+                //           horizontal: deviceWidth * 0.08),
+                //       child: TextButton(
+                //         onPressed: () {
+                //           Navigator.pushNamed(
+                //               context, ForgotPasswordPage.routesName);
+                //         },
+                //         child: Text('Forgot Password?',
+                //             style: regular15.copyWith(
+                //               color: Colors.grey[600],
+                //             )),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 //sign in button
                 Hero(
                   tag: 'button',

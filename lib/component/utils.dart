@@ -44,6 +44,7 @@ class UserData {
   String email = '';
   int telp = 0;
   String uid = '';
+  bool isDataComplete = false;
 
   Future get(String? uid) async {
     await FirebaseFirestore.instance
@@ -56,6 +57,7 @@ class UserData {
         fullname = document.data()!['fullname'];
         email = document.data()!['email'];
         uid = document.data()!['uid'];
+        isDataComplete = document.data()!['is_data_complete'];
       } else {
         print('user tidak ditemukan');
       }

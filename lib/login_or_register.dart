@@ -4,9 +4,9 @@ import 'pages/auth/login_page.dart';
 import 'pages/auth/register_page.dart';
 
 class LoginOrRegister extends StatefulWidget {
-  LoginOrRegister({super.key});
+  const LoginOrRegister({super.key});
 
-  String routesName = '/loginOrRegister';
+  final String routesName = '/loginOrRegister';
 
   @override
   State<LoginOrRegister> createState() => _LoginOrRegisterState();

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lapor_in/pages/page_manager.dart';
 import 'login_or_register.dart';
-import 'pages/auth/email_verification.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -15,7 +15,7 @@ class AuthPage extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return const EmailVerification();
+              return const PageManager();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('data');
             } else if (snapshot.hasError) {
@@ -23,7 +23,7 @@ class AuthPage extends StatelessWidget {
                 child: Text('something went wrong'),
               );
             } else {
-              return LoginOrRegister();
+              return const LoginOrRegister();
             }
           }),
     );
