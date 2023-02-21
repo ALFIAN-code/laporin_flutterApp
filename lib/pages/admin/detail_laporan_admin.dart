@@ -5,16 +5,16 @@ import 'package:lapor_in/pages/theme/style.dart';
 import 'package:intl/intl.dart';
 import 'package:lapor_in/pages/user/edit_page.dart';
 
-class DetailLaporan extends StatefulWidget {
-  const DetailLaporan({super.key});
+class DetailLaporanAdmin extends StatefulWidget {
+  const DetailLaporanAdmin({super.key});
 
-  static String routeName = '/detailLaporan';
+  static String routeName = '/DetailLaporanAdmin';
 
   @override
-  State<DetailLaporan> createState() => _DetailLaporanState();
+  State<DetailLaporanAdmin> createState() => _DetailLaporanAdminState();
 }
 
-class _DetailLaporanState extends State<DetailLaporan> {
+class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
   getLaporanData(String? id) {
     return FirebaseFirestore.instance.collection('laporan').doc(id).get();
   }
@@ -147,61 +147,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                         // const SizedBox(
                         //   height: 20,
                         // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, right: 20),
-                              child: Material(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(100)),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (status == 'terkirim') {
-                                      Navigator.pushNamed(
-                                          context, EditPage.routeName);
-                                    } else {
-                                      errorDialog(
-                                          title: 'tidak bisa mengedit',
-                                          content:
-                                              'laporan yang sudah ditanggapi tidak bisa di rubah',
-                                          context: context);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    decoration: BoxDecoration(
-                                        color: (status == 'terkirim')
-                                            ? Colors.indigo
-                                            : Colors.grey,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30))),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          'Edit',
-                                          style: medium15.copyWith(
-                                              color: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        const Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -225,7 +171,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 30, vertical: 10),
                                     decoration: BoxDecoration(
-                                        color: (status == 'diproses')
+                                        color: (status == 'terkirim')
                                             ? Colors.deepPurple
                                             : Colors.grey,
                                         borderRadius: BorderRadius.all(
@@ -235,7 +181,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          'Lihat Tanggapan',
+                                          'tanggapi',
                                           style: medium15.copyWith(
                                               color: Colors.white),
                                         ),

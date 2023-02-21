@@ -367,10 +367,12 @@ class _HomePageState extends State<HomePage> {
                                                   ]),
                                               child: LaporanView(
                                                   onTap: () {
-                                                    Navigator.pushNamed(
-                                                        context,
-                                                        DetailLaporan
-                                                            .routeName);
+                                                    Navigator.pushNamed(context,
+                                                        DetailLaporan.routeName,
+                                                        arguments: snapshot
+                                                                .requireData
+                                                                .docs[index]
+                                                            ['id_laporan']);
                                                   },
                                                   tanggal:
                                                       DateFormat('dd MMMM yyyy')

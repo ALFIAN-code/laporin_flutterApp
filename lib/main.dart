@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:lapor_in/component/utils.dart';
 import 'package:lapor_in/firebase_options.dart';
 import 'package:lapor_in/pages/admin/add_petugas.dart';
+import 'package:lapor_in/pages/admin/detail_laporan_admin.dart';
 import 'package:lapor_in/pages/admin/laporan_selseai.dart';
 import 'package:lapor_in/pages/admin/list_petugas_page.dart';
 import 'package:lapor_in/pages/auth/forgot_password_page.dart';
 import 'package:lapor_in/pages/admin/dashboard.dart';
 import 'package:lapor_in/pages/user/add_laporan.dart';
 import 'package:lapor_in/pages/user/detail_laporan.dart';
+import 'package:lapor_in/pages/user/edit_page.dart';
 import 'package:lapor_in/pages/user/lengkapi_data.dart';
 import 'auth_page.dart';
 import 'pages/user/home_page.dart';
@@ -62,7 +64,9 @@ class MyApp extends StatelessWidget {
         LaporanSelesai.routesName: (context) => const LaporanSelesai(),
         PetugasView.routesName: (context) => const PetugasView(),
         AddPetugas.routesName: (context) => const AddPetugas(),
-        DetailLaporan.routeName: (context) => const DetailLaporan()
+        DetailLaporan.routeName: (context) => const DetailLaporan(),
+        EditPage.routeName: (context) => const EditPage(),
+        DetailLaporanAdmin.routeName: (context) => const DetailLaporanAdmin()
       },
     );
   }

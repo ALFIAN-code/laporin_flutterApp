@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:lapor_in/component/utils.dart';
+import 'package:lapor_in/pages/admin/detail_laporan_admin.dart';
 import 'package:lapor_in/pages/admin/laporan_selseai.dart';
 import 'package:lapor_in/pages/admin/list_petugas_page.dart';
 import 'package:lapor_in/pages/theme/style.dart';
@@ -273,6 +274,12 @@ class _DashboardState extends State<Dashboard> {
                                           ['tanggal'] as Timestamp)
                                       .toDate();
                                   return LaporanView(
+                                      onTap: () {
+                                        Navigator.pushNamed(context,
+                                            DetailLaporanAdmin.routeName,
+                                            arguments: snapshot.data
+                                                ?.docs[index]['id_laporan']);
+                                      },
                                       tanggal:
                                           DateFormat('kk:mm').format(timeStamp),
                                       time: DateFormat('dd MMMM yyyy')
@@ -314,6 +321,12 @@ class _DashboardState extends State<Dashboard> {
                                             ['tanggal'] as Timestamp)
                                         .toDate();
                                     return LaporanView(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              DetailLaporanAdmin.routeName,
+                                              arguments: snapshot.data
+                                                  ?.docs[index]['id_laporan']);
+                                        },
                                         tanggal: DateFormat('kk:mm')
                                             .format(timeStamp),
                                         time: DateFormat('dd MMMM yyyy')

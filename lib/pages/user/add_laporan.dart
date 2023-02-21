@@ -55,8 +55,15 @@ class _AddLaporanState extends State<AddLaporan> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xffAFA1FF),
         appBar: appbar,
         body: SingleChildScrollView(
+            child: Container(
+          margin: EdgeInsets.only(top: 10),
+          padding: EdgeInsets.only(top: 30),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -228,7 +235,7 @@ class _AddLaporanState extends State<AddLaporan> {
               ],
             ),
           ),
-        ),
+        )),
       ),
     );
   }
