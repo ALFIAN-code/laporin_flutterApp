@@ -81,7 +81,10 @@ class _PetugasViewState extends State<PetugasView> {
                       itemCount: snapshot.data?.size,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          leading: const CircleAvatar(),
+                          leading: const CircleAvatar(
+                            backgroundImage:
+                                AssetImage('lib/images/petugas_icon.png'),
+                          ),
                           subtitle:
                               Text(snapshot.requireData.docs[index]['email']),
                           title: Text(

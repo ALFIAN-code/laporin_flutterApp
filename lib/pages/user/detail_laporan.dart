@@ -23,8 +23,8 @@ class _DetailLaporanState extends State<DetailLaporan> {
   Widget build(BuildContext context) {
     var bodyHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-    var argument = ModalRoute.of(context)?.settings.arguments;
-    print('ini adalah agrument : $argument');
+    var laporanId = ModalRoute.of(context)?.settings.arguments;
+    print('ini adalah agrument : $laporanId');
 
     return SafeArea(
       child: Scaffold(
@@ -33,7 +33,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
             child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('laporan')
-              .doc('$argument')
+              .doc('$laporanId')
               .snapshots(),
           builder: (context, snapshot) {
             // print();
@@ -147,113 +147,185 @@ class _DetailLaporanState extends State<DetailLaporan> {
                         // const SizedBox(
                         //   height: 20,
                         // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, right: 20),
-                              child: Material(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(100)),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (status == 'terkirim') {
-                                      Navigator.pushNamed(
-                                          context, EditPage.routeName);
-                                    } else {
-                                      errorDialog(
-                                          title: 'tidak bisa mengedit',
-                                          content:
-                                              'laporan yang sudah ditanggapi tidak bisa di rubah',
-                                          context: context);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    decoration: BoxDecoration(
-                                        color: (status == 'terkirim')
-                                            ? Colors.indigo
-                                            : Colors.grey,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30))),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          'Edit',
-                                          style: medium15.copyWith(
-                                              color: Colors.white),
+                        (status == 'terkirim')
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 10, right: 20),
+                                    child: Material(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(100)),
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (status == 'terkirim') {
+                                            Navigator.pushNamed(
+                                                context, EditPage.routesName,
+                                                arguments: laporanId);
+                                          } else {
+                                            errorDialog(
+                                                title: 'tidak bisa mengedit',
+                                                content:
+                                                    'laporan yang sudah ditanggapi tidak bisa di rubah',
+                                                context: context);
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
+                                          decoration: BoxDecoration(
+                                              color: (status == 'terkirim')
+                                                  ? Colors.indigo
+                                                  : Colors.grey,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30))),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Text(
+                                                'Edit',
+                                                style: medium15.copyWith(
+                                                    color: Colors.white),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              const Icon(
+                                                Icons.edit,
+                                                color: Colors.white,
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        const Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                        )
-                                      ],
+                                      ),
                                     ),
+                                  ),
+                                ],
+                              )
+                            : Container(),
+
+                        (status == 'diproses' || status == 'selesai')
+                            ? StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('tanggapan')
+                                    .doc('$laporanId')
+                                    .snapshots(),
+                                builder: (context, snapshotTanggapan) {
+                                  if (snapshotTanggapan.hasData) {
+                                    DateTime tanggalTanggapan =
+                                        (snapshotTanggapan.data!
+                                                    .get('tanggal_tanggapan')
+                                                as Timestamp)
+                                            .toDate();
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 30),
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Colors.grey[300]?.withAlpha(150),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(30))),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Tanggapan',
+                                            style: bold25.copyWith(
+                                              color: Colors.grey[800],
+                                              fontSize: 20,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          Text(
+                                            'id tanggapan: ${snapshotTanggapan.data!.get('id_tanggapan')}',
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            'id laporan : ${snapshotTanggapan.data!.get('id_laporan')}',
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            'id petugas : ${snapshotTanggapan.data!.get('id_petugas')}',
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            DateFormat('dd MMMM yyyy, kk:mm')
+                                                .format(tanggalTanggapan),
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            'isi tanggapan :',
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            '${snapshotTanggapan.data!.get('isi_tanggapan')}',
+                                            style: regular15.copyWith(
+                                                letterSpacing: 0.3),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: Text('loading'),
+                                    );
+                                  }
+                                })
+                            : Center(
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 30),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[300]?.withAlpha(150),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30))),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Belum Ada Tangggapan',
+                                        style: semiBold15,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'laporan anda akan ditanggapi segera',
+                                        style: regular15.copyWith(fontSize: 15),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, right: 20),
-                              child: Material(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(100)),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (status == 'terkirim') {
-                                      errorDialog(
-                                          title: 'belum ada tanggapan',
-                                          content:
-                                              'laporan anda akan ditanggapi segera',
-                                          context: context);
-                                    } else {}
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30, vertical: 10),
-                                    decoration: BoxDecoration(
-                                        color: (status == 'diproses')
-                                            ? Colors.deepPurple
-                                            : Colors.grey,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30))),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          'Lihat Tanggapan',
-                                          style: medium15.copyWith(
-                                              color: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_forward,
-                                          color: Colors.white,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(
                           height: 20,
                         )

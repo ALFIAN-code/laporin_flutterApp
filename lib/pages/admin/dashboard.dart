@@ -11,6 +11,7 @@ import 'package:lapor_in/pages/admin/list_petugas_page.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 
 import '../../component/laporan_componen.dart';
+import '../../model/user_model.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -32,30 +33,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    // setFullname();
-    // getUserData();
     userData.get(uid);
     super.initState();
   }
-
-  // Future getStatus() async {
-  //   role = await Utils.getUserStatus();
-  // }
-
-  // setFullname() async {
-  //   fullname = await getUserData();
-  // }
-
-  // Future<String> getUserData() async {
-  //   User? user = FirebaseAuth.instance.currentUser;
-  //   String data = '';
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(user?.uid)
-  //       .get()
-  //       .then((DocumentSnapshot document) {});
-  //   return data;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +227,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           Tab(
                             child: Text(
-                              'Riwayat',
+                              'Statistik',
                               style: bold17.copyWith(fontSize: 15),
                             ),
                           ),
@@ -277,13 +257,16 @@ class _DashboardState extends State<Dashboard> {
                                       onTap: () {
                                         Navigator.pushNamed(context,
                                             DetailLaporanAdmin.routeName,
-                                            arguments: snapshot.data
-                                                ?.docs[index]['id_laporan']);
+                                            arguments: {
+                                              'userData': userData,
+                                              'laporanId': snapshot.data
+                                                  ?.docs[index]['id_laporan']
+                                            });
                                       },
-                                      tanggal:
-                                          DateFormat('kk:mm').format(timeStamp),
-                                      time: DateFormat('dd MMMM yyyy')
+                                      tanggal: DateFormat('dd MMMM yyyy')
                                           .format(timeStamp),
+                                      time:
+                                          DateFormat('kk:mm').format(timeStamp),
                                       isiLaporan: snapshot.requireData
                                           .docs[index]['isi_laporan'],
                                       judul: snapshot.requireData.docs[index]
@@ -324,12 +307,15 @@ class _DashboardState extends State<Dashboard> {
                                         onTap: () {
                                           Navigator.pushNamed(context,
                                               DetailLaporanAdmin.routeName,
-                                              arguments: snapshot.data
-                                                  ?.docs[index]['id_laporan']);
+                                              arguments: {
+                                                'userData': userData,
+                                                'laporanId': snapshot.data
+                                                    ?.docs[index]['id_laporan']
+                                              });
                                         },
-                                        tanggal: DateFormat('kk:mm')
+                                        time: DateFormat('kk:mm')
                                             .format(timeStamp),
-                                        time: DateFormat('dd MMMM yyyy')
+                                        tanggal: DateFormat('dd MMMM yyyy')
                                             .format(timeStamp),
                                         isiLaporan: snapshot.requireData
                                             .docs[index]['isi_laporan'],
@@ -350,52 +336,7 @@ class _DashboardState extends State<Dashboard> {
                           },
                         ),
                       ),
-                      Expanded(
-                        child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('tanggapan')
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: Text('loading...'),
-                              );
-                            } else if (snapshot.hasData) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 20),
-                                child: ListView.builder(
-                                  itemCount: snapshot.data?.size,
-                                  itemBuilder: (context, index) {
-                                    var timeStamp = snapshot.requireData
-                                        .docs[index]['tanggal'] as Timestamp;
-                                    DateTime dateTime = timeStamp.toDate();
-                                    var dateString =
-                                        DateFormat('K:mm:ss').format(dateTime);
-
-                                    return LaporanView(
-                                        tanggal: '166',
-                                        time: dateString,
-                                        isiLaporan: snapshot.requireData
-                                            .docs[index]['isi_laporan'],
-                                        judul: snapshot.requireData.docs[index]
-                                            ['judul'],
-                                        path: snapshot.requireData.docs[index]
-                                            ['url_image'],
-                                        status: snapshot.requireData.docs[index]
-                                            ['status']);
-                                  },
-                                ),
-                              );
-                            } else {
-                              return const Center(
-                                child: Text('tidak ada data'),
-                              );
-                            }
-                          },
-                        ),
-                      ),
+                      Container()
                     ]),
                   ),
                 ],

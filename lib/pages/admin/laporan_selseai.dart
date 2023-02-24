@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 
 import '../../component/laporan_componen.dart';
+import 'detail_laporan_admin.dart';
 
 class LaporanSelesai extends StatelessWidget {
   const LaporanSelesai({super.key});
@@ -74,6 +75,12 @@ class LaporanSelesai extends StatelessWidget {
                           )
                         ]),
                     child: LaporanView(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, DetailLaporanAdmin.routeName,
+                              arguments: snapshot.data?.docs[index]
+                                  ['id_laporan']);
+                        },
                         tanggal: DateFormat('kk:mm').format(timeStamp),
                         time: DateFormat('dd MMMM yyyy').format(timeStamp),
                         isiLaporan: snapshot.requireData.docs[index]

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -34,33 +35,23 @@ class Utils {
     AuthService().googleLogout();
     FirebaseAuth.instance.signOut();
   }
-}
 
-class UserData {
-  String role = '';
-  String fullname = '';
-  String alamat = '';
-  int nik = 0;
-  String email = '';
-  int telp = 0;
-  String uid = '';
-  bool isDataComplete = false;
+  static Future<User?> createUser(String email, String password) async {
+    FirebaseApp app = await Firebase.initializeApp(
+        name: 'Secondary', options: Firebase.app().options);
 
-  Future get(String? uid) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get()
-        .then((document) {
-      if (document.exists) {
-        role = document.data()!['role'];
-        fullname = document.data()!['fullname'];
-        email = document.data()!['email'];
-        uid = document.data()!['uid'];
-        isDataComplete = document.data()!['is_data_complete'];
-      } else {
-        print('user tidak ditemukan');
-      }
-    });
+    try {
+      await FirebaseAuth.instanceFor(app: app)
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      // Do something with exception. This try/catch is here to make sure
+      // that even if the user creation fails, app.delete() runs, if is not,
+      // next time Firebase.initializeApp() will fail as the previous one was
+      // not deleted.
+      print(e.message);
+    }
+
+    await app.delete();
+    return Future.sync(() => FirebaseAuth.instanceFor(app: app).currentUser);
   }
 }

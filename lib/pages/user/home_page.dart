@@ -9,6 +9,7 @@ import 'package:lapor_in/component/error_dialog.dart';
 import 'package:lapor_in/component/laporan_componen.dart';
 import 'package:lapor_in/pages/user/detail_laporan.dart';
 import '../../component/utils.dart';
+import '../../model/user_model.dart';
 import '../theme/style.dart';
 import 'add_laporan.dart';
 import 'lengkapi_data.dart';
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage> {
                               FutureBuilder(
                                 future: userData.get(uid),
                                 builder: (context, snapshot) {
+                                  // Navigator.pop(context);
                                   return Text(
                                     'hallo $firstname',
                                     maxLines: 1,
@@ -300,13 +302,13 @@ class _HomePageState extends State<HomePage> {
                                   tabs: [
                                     Tab(
                                       child: Text(
-                                        'Riwayat',
+                                        'Laporan Baru',
                                         style: bold17.copyWith(fontSize: 15),
                                       ),
                                     ),
                                     Tab(
                                       child: Text(
-                                        'tanggapan',
+                                        'selesai',
                                         style: bold17.copyWith(fontSize: 15),
                                       ),
                                     ),
@@ -322,14 +324,7 @@ class _HomePageState extends State<HomePage> {
                                       .where('id_pelapor', isEqualTo: uid)
                                       .snapshots(),
                                   builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.connectionState ==
-                                        ConnectionState.none) {
-                                      return const Center(
-                                        child: Text('err'),
-                                      );
-                                    } else {
+                                    if (snapshot.hasData) {
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 20),
@@ -341,64 +336,168 @@ class _HomePageState extends State<HomePage> {
                                                     ['tanggal'] as Timestamp)
                                                 .toDate();
 
-                                            return Slidable(
-                                              endActionPane: ActionPane(
-                                                  extentRatio: 0.2,
-                                                  motion: const DrawerMotion(),
-                                                  children: [
-                                                    SlidableAction(
-                                                      autoClose: true,
-                                                      icon: Icons.delete,
-                                                      foregroundColor:
-                                                          const Color.fromARGB(
-                                                              255, 202, 59, 49),
-                                                      onPressed: (context) {
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection(
-                                                                'laporan')
-                                                            .doc(snapshot
-                                                                    .requireData
-                                                                    .docs[index]
-                                                                ['id_laporan'])
-                                                            .delete();
-                                                      },
-                                                    )
-                                                  ]),
-                                              child: LaporanView(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(context,
-                                                        DetailLaporan.routeName,
-                                                        arguments: snapshot
-                                                                .requireData
-                                                                .docs[index]
-                                                            ['id_laporan']);
-                                                  },
-                                                  tanggal:
-                                                      DateFormat('dd MMMM yyyy')
-                                                          .format(timeStamp),
-                                                  time: DateFormat('kk:mm')
-                                                      .format(timeStamp),
-                                                  isiLaporan: snapshot
-                                                          .requireData
-                                                          .docs[index]
-                                                      ['isi_laporan'],
-                                                  judul: snapshot.requireData
-                                                      .docs[index]['judul'],
-                                                  path: snapshot.requireData
-                                                      .docs[index]['url_image'],
-                                                  status: snapshot.requireData
-                                                      .docs[index]['status']),
-                                            );
+                                            if (snapshot.data?.docs[index]
+                                                    ['status'] !=
+                                                'selesai') {
+                                              return Slidable(
+                                                endActionPane: ActionPane(
+                                                    extentRatio: 0.2,
+                                                    motion:
+                                                        const DrawerMotion(),
+                                                    children: [
+                                                      SlidableAction(
+                                                        autoClose: true,
+                                                        icon: Icons.delete,
+                                                        foregroundColor:
+                                                            const Color
+                                                                    .fromARGB(
+                                                                255,
+                                                                202,
+                                                                59,
+                                                                49),
+                                                        onPressed: (context) {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'laporan')
+                                                              .doc(snapshot
+                                                                      .requireData
+                                                                      .docs[index]
+                                                                  [
+                                                                  'id_laporan'])
+                                                              .delete();
+                                                        },
+                                                      )
+                                                    ]),
+                                                child: LaporanView(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          DetailLaporan
+                                                              .routeName,
+                                                          arguments: snapshot
+                                                                  .requireData
+                                                                  .docs[index]
+                                                              ['id_laporan']);
+                                                    },
+                                                    tanggal:
+                                                        DateFormat('dd MMMM yyyy')
+                                                            .format(timeStamp),
+                                                    time: DateFormat('kk:mm')
+                                                        .format(timeStamp),
+                                                    isiLaporan: snapshot
+                                                            .requireData
+                                                            .docs[index]
+                                                        ['isi_laporan'],
+                                                    judul: snapshot.requireData
+                                                        .docs[index]['judul'],
+                                                    path: snapshot.requireData
+                                                            .docs[index]
+                                                        ['url_image'],
+                                                    status: snapshot.requireData
+                                                        .docs[index]['status']),
+                                              );
+                                            } else {
+                                              return Container();
+                                            }
                                           },
                                         ),
                                       );
+                                    } else {
+                                      return const CircularProgressIndicator();
                                     }
                                   },
                                 ),
-                                const Center(
-                                  child: Text('tanggapan view'),
-                                )
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('laporan')
+                                      .where('id_pelapor', isEqualTo: uid)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 20),
+                                        child: ListView.builder(
+                                          itemCount: snapshot.data?.size,
+                                          itemBuilder: (context, index) {
+                                            var timeStamp = (snapshot
+                                                        .data?.docs[index]
+                                                    ['tanggal'] as Timestamp)
+                                                .toDate();
+
+                                            if (snapshot.data?.docs[index]
+                                                    ['status'] ==
+                                                'selesai') {
+                                              return Slidable(
+                                                endActionPane: ActionPane(
+                                                    extentRatio: 0.2,
+                                                    motion:
+                                                        const DrawerMotion(),
+                                                    children: [
+                                                      SlidableAction(
+                                                        autoClose: true,
+                                                        icon: Icons.delete,
+                                                        foregroundColor:
+                                                            const Color
+                                                                    .fromARGB(
+                                                                255,
+                                                                202,
+                                                                59,
+                                                                49),
+                                                        onPressed: (context) {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'laporan')
+                                                              .doc(snapshot
+                                                                      .requireData
+                                                                      .docs[index]
+                                                                  [
+                                                                  'id_laporan'])
+                                                              .delete();
+                                                        },
+                                                      )
+                                                    ]),
+                                                child: LaporanView(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          DetailLaporan
+                                                              .routeName,
+                                                          arguments: snapshot
+                                                                  .requireData
+                                                                  .docs[index]
+                                                              ['id_laporan']);
+                                                    },
+                                                    tanggal:
+                                                        DateFormat('dd MMMM yyyy')
+                                                            .format(timeStamp),
+                                                    time: DateFormat('kk:mm')
+                                                        .format(timeStamp),
+                                                    isiLaporan: snapshot
+                                                            .requireData
+                                                            .docs[index]
+                                                        ['isi_laporan'],
+                                                    judul: snapshot.requireData
+                                                        .docs[index]['judul'],
+                                                    path: snapshot.requireData
+                                                            .docs[index]
+                                                        ['url_image'],
+                                                    status: snapshot.requireData
+                                                        .docs[index]['status']),
+                                              );
+                                            } else {
+                                              return Container();
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    } else {
+                                      return const CircularProgressIndicator();
+                                    }
+                                  },
+                                ),
                               ]),
                             )
                           ],
@@ -410,6 +509,45 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           )),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  final int maxLine, minLine;
+  final String hint;
+  final EdgeInsetsGeometry? contentPadding;
+  final TextEditingController controller;
+  const CustomTextField(
+      {super.key,
+      required this.hint,
+      required this.maxLine,
+      required this.minLine,
+      this.contentPadding,
+      required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.07),
+      child: TextField(
+        controller: controller,
+        minLines: minLine,
+        maxLines: maxLine,
+        decoration: InputDecoration(
+            fillColor: Colors.grey[200],
+            hintText: hint,
+            filled: true,
+            hintStyle: medium15.copyWith(color: Colors.grey.shade500),
+            contentPadding: contentPadding,
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
+                borderRadius: BorderRadius.all(Radius.circular(20)))),
+      ),
     );
   }
 }

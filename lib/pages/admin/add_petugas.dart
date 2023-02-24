@@ -1,17 +1,12 @@
-import 'dart:io';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lapor_in/component/my_button.dart';
 import 'package:lapor_in/component/text_field.dart';
-// import 'package:lapor_in/pages/admin/dashboard.dart';
+import 'package:lapor_in/component/utils.dart';
 
-// import '../../component/utils.dart';
 import '../theme/style.dart';
 
 class AddPetugas extends StatefulWidget {
@@ -24,8 +19,6 @@ class AddPetugas extends StatefulWidget {
 }
 
 class _AddPetugasState extends State<AddPetugas> {
-  XFile? pickedImage;
-  ImagePicker imagePicker = ImagePicker();
   String imageUrl = '';
   String uniqueCode = DateTime.now().microsecondsSinceEpoch.toString();
 
@@ -43,64 +36,32 @@ class _AddPetugasState extends State<AddPetugas> {
     super.dispose();
   }
 
-  // void uploadImage() async {
-  //   if (pickedImage == null) return;
-  //   Reference refrenceRoot = FirebaseStorage.instance.ref();
-  //   Reference refrenceDirImage =
-  //       refrenceRoot.child('laporan/${_emailController.text}');
+  void makeAccount() async {
+    if (_emailController.text.isEmpty ||
+        _fullnameController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _telpController.text.isEmpty) {
+      Utils.showSnackBar('field tidak boleh kosong');
+    } else {
+      try {
+        var user = await Utils.createUser(
+            _emailController.text, _passwordController.text);
+        FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+          'fullname': _fullnameController.text,
+          'email': _emailController.text,
+          'password': _passwordController.text,
+          'telp': _telpController.text,
+          'uid': user.uid,
+          'role': 'petugas'
+        });
 
-  //   Reference refrengeImageToUpload = refrenceDirImage.child(uniqueCode);
-  //   try {
-  //     await refrengeImageToUpload.putFile(File(pickedImage!.path));
-  //     imageUrl = await refrengeImageToUpload.getDownloadURL();
-
-  //     print('ini adalah link download : $imageUrl');
-  //   } catch (e) {
-  //     Utils.showSnackBar(e.toString());
-  //   }
-  // }
-
-  // void _getImage() async {
-  //   XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
-  //   setState(() {
-  //     pickedImage = image;
-  //   });
-  // }
-
-  // void makeAccount() async {
-  //   uploadImage();
-  //   if (imageUrl.isEmpty) {
-  //     Utils.showSnackBar('upload gambar terlebih dahulu');
-  //   } else if (_emailController.text.isEmpty ||
-  //       _fullnameController.text.isEmpty ||
-  //       _passwordController.text.isEmpty ||
-  //       _telpController.text.isEmpty) {
-  //     Utils.showSnackBar('field tidak boleh kosong');
-  //   } else {
-  //     try {
-  //       // FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //       //     email: _emailController.text, password: _passwordController.text);
-
-  //       FirebaseApp app = await Firebase.initializeApp(
-  //           name: 'secondary', options: Firebase.app().options);
-  //       await FirebaseAuth.instanceFor(app: app).createUserWithEmailAndPassword(
-  //           email: _emailController.text, password: _passwordController.text);
-
-  //       await FirebaseFirestore.instance.collection('users').doc().set({
-  //         'url_image': imageUrl,
-  //         'nama': _fullnameController.text,
-  //         'password': _passwordController.text,
-  //         'telp': _telpController.text,
-  //         'role': 'petugas'
-  //       });
-  //       // ignore: use_build_context_synchronously
-  //       Navigator.pushReplacementNamed(context, Dashboard.routesName);
-  //     } on Exception catch (e) {
-  //       Navigator.pushReplacementNamed(context, Dashboard.routesName);
-  //       Utils.showSnackBar(e.toString());
-  //     }
-  //   }
-  // }
+        Navigator.pop(context);
+      } on Exception catch (e) {
+        Navigator.pop(context);
+        Utils.showSnackBar(e.toString());
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,40 +91,6 @@ class _AddPetugasState extends State<AddPetugas> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            GestureDetector(
-              // onTap: _getImage,
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: (pickedImage != null)
-                    ? Image.file(
-                        File(pickedImage!.path),
-                        height: MediaQuery.of(context).size.height * 0.35,
-                      )
-                    : Container(
-                        height: 250,
-                        decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 241, 241, 241),
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(30))),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.camera_alt),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'select image',
-                                style: medium15,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-              ),
-            ),
             const SizedBox(
               height: 20,
             ),
@@ -257,7 +184,7 @@ class _AddPetugasState extends State<AddPetugas> {
             ),
             MyButton(
                 onTap: () {
-                  // makeAccount();
+                  makeAccount();
                 },
                 color: Colors.deepPurple,
                 child: Text(
