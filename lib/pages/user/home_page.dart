@@ -182,7 +182,6 @@ class _HomePageState extends State<HomePage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    // mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment:
@@ -404,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     } else {
-                                      return const CircularProgressIndicator();
+                                      return Center(child: const CircularProgressIndicator());
                                     }
                                   },
                                 ),
@@ -494,7 +493,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     } else {
-                                      return const CircularProgressIndicator();
+                                      return Center(child: const CircularProgressIndicator());
                                     }
                                   },
                                 ),

@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lapor_in/component/utils.dart';
@@ -8,7 +8,7 @@ import 'package:lapor_in/pages/admin/add_petugas.dart';
 import 'package:lapor_in/pages/admin/detail_laporan_admin.dart';
 import 'package:lapor_in/pages/admin/laporan_selseai.dart';
 import 'package:lapor_in/pages/admin/list_petugas_page.dart';
-import 'package:lapor_in/pages/admin/report.dart';
+// import 'package:lapor_in/pages/admin/report.dart';
 import 'package:lapor_in/pages/admin/show_tanggapan.dart';
 import 'package:lapor_in/pages/auth/forgot_password_page.dart';
 import 'package:lapor_in/pages/admin/dashboard.dart';
@@ -32,7 +32,7 @@ void main(List<String> args) async {
   //           projectId: 'laporin-89b57'));
   // } else {
   await Firebase.initializeApp(
-      name: 'lapor in', options: DefaultFirebaseOptions.currentPlatform);
+     options: DefaultFirebaseOptions.currentPlatform);
   // }
 
   SystemChrome.setPreferredOrientations([

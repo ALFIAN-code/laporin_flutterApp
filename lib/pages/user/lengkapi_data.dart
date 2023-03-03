@@ -59,15 +59,15 @@ class _LengkapiDataState extends State<LengkapiData> {
   Future<void> addData(
       int nik, int telp, String alamat, BuildContext context) async {
     try {
-      // showDialog(
-      //     context: context,
-      //     builder: (context) {
-      //       return const Center(
-      //         child: RefreshProgressIndicator(
-      //           color: Color(0xff8CCD00),
-      //         ),
-      //       );
-      //     });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(
+              child: RefreshProgressIndicator(
+                color: Color(0xff8CCD00),
+              ),
+            );
+          });
       await FirebaseFirestore.instance
           .collection("users")
           .doc(currentUser?.uid)
@@ -81,6 +81,9 @@ class _LengkapiDataState extends State<LengkapiData> {
         'is_data_complete': true
       });
       // ignore: use_build_context_synchronously
+      if (mounted) {
+        Navigator.pop(context);
+      }
       Navigator.pushReplacementNamed(context, HomePage.routesName);
       Utils.showSnackBar('data sukses ditambahkan');
     } catch (e) {

@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(0),
@@ -225,12 +225,6 @@ class _DashboardState extends State<Dashboard> {
                               style: bold17.copyWith(fontSize: 15),
                             ),
                           ),
-                          Tab(
-                            child: Text(
-                              'Statistik',
-                              style: bold17.copyWith(fontSize: 15),
-                            ),
-                          ),
                         ]),
                   ),
                   Expanded(
@@ -242,7 +236,7 @@ class _DashboardState extends State<Dashboard> {
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
+                            return Center(child: const CircularProgressIndicator());
                           } else {
                             return Padding(
                               padding: const EdgeInsets.symmetric(
@@ -336,7 +330,6 @@ class _DashboardState extends State<Dashboard> {
                           },
                         ),
                       ),
-                      Container()
                     ]),
                   ),
                 ],

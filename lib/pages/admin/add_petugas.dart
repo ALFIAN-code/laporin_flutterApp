@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lapor_in/component/my_button.dart';
 import 'package:lapor_in/component/text_field.dart';
 import 'package:lapor_in/component/utils.dart';
@@ -43,9 +41,17 @@ class _AddPetugasState extends State<AddPetugas> {
         _telpController.text.isEmpty) {
       Utils.showSnackBar('field tidak boleh kosong');
     } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: RefreshProgressIndicator());
+        },
+      );
       try {
         var user = await Utils.createUser(
             _emailController.text, _passwordController.text);
+
         FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
           'fullname': _fullnameController.text,
           'email': _emailController.text,
@@ -55,7 +61,10 @@ class _AddPetugasState extends State<AddPetugas> {
           'role': 'petugas'
         });
 
-        Navigator.pop(context);
+        if (mounted) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
       } on Exception catch (e) {
         Navigator.pop(context);
         Utils.showSnackBar(e.toString());
@@ -134,6 +143,7 @@ class _AddPetugasState extends State<AddPetugas> {
                 controller: _emailController,
                 hint: 'Example@mail.com (email aktif)',
                 obsecureText: false,
+                keyboardType: TextInputType.emailAddress,
                 textCapitalization: TextCapitalization.words),
             const SizedBox(
               height: 20,
@@ -156,6 +166,8 @@ class _AddPetugasState extends State<AddPetugas> {
                 controller: _telpController,
                 hint: '0815********',
                 obsecureText: false,
+                keyboardType: TextInputType.number,
+                inputFormater: [FilteringTextInputFormatter.digitsOnly],
                 textCapitalization: TextCapitalization.words),
             const SizedBox(
               height: 20,

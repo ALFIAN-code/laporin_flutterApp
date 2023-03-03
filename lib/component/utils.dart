@@ -37,7 +37,7 @@ class Utils {
   }
 
   static Future<User?> createUser(String email, String password) async {
-    FirebaseApp app = await Firebase.initializeApp(
+     FirebaseApp app = await Firebase.initializeApp(
         name: 'Secondary', options: Firebase.app().options);
 
     try {
@@ -53,5 +53,32 @@ class Utils {
 
     await app.delete();
     return Future.sync(() => FirebaseAuth.instanceFor(app: app).currentUser);
+  }
+
+  static Future<void> deleteUser(
+      String uid, String email, String password) async {
+    FirebaseApp app = await Firebase.initializeApp(
+        name: 'Secondary', options: Firebase.app().options);
+
+    try {
+      var instance = FirebaseAuth.instanceFor(app: app);
+      // deleting user data
+
+      // //deleting user account
+      // instance.signInWithEmailAndPassword(email: email, password: password);
+      // instance.currentUser!.delete();
+      // instance.signOut();
+
+      var user = await instance.currentUser!;
+      AuthCredential credentials =
+          EmailAuthProvider.credential(email: email, password: password);
+      print(user);
+      var result = await user.reauthenticateWithCredential(credentials);
+      await FirebaseFirestore.instance.collection('users').doc(uid).delete();
+      await result.user!.delete();
+    } on FirebaseAuthException catch (e) {
+      Utils.showSnackBar(e.message.toString());
+    }
+    // await app.delete();
   }
 }

@@ -7,7 +7,7 @@ import '../../../component/my_button.dart';
 import '../../../component/square_tile.dart';
 import '../../../component/text_field.dart';
 import '../../theme/style.dart';
-import '../forgot_password_page.dart';
+// import '../forgot_password_page.dart';
 
 // ignore: must_be_immutable
 class LoginPageMobile extends StatefulWidget {
