@@ -48,6 +48,7 @@ class _PageManagerState extends State<PageManager> {
                   {
                     ref.doc(currentUser?.uid).set({
                       'fullname': currentUser?.displayName,
+                      'password' : '-',
                       'email': currentUser?.email,
                       'uid': currentUser?.uid,
                       'role': 'user',

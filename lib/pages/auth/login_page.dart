@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             child: RefreshProgressIndicator(
               color: Color(0xff8CCD00),
             ),
-          ); 
+          );
         });
 
     try {
@@ -46,10 +46,10 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      Navigator.pop(context);
+      // if (mounted) {
 
-      if (mounted) {
-        Navigator.pop(context);
-      }
+      // }
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       if (e.code == 'user-not-found') {

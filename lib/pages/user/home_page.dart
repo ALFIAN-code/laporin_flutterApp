@@ -35,9 +35,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    String firstname = (userData.fullname.split(' ').length < 2)
-        ? userData.fullname
-        : userData.fullname.split(' ').first;
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -86,6 +83,10 @@ class _HomePageState extends State<HomePage> {
                               FutureBuilder(
                                 future: userData.get(uid),
                                 builder: (context, snapshot) {
+                                  String firstname =
+                                      (userData.fullname.split(' ').length < 2)
+                                          ? userData.fullname
+                                          : userData.fullname.split(' ')[0];
                                   // Navigator.pop(context);
                                   return Text(
                                     'hallo $firstname',
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                               //   height: 10,
                               // ),
                               Text(
-                                'Selamat Pagi',
+                                'Have a nice day',
                                 style: bold25.copyWith(color: Colors.white),
                               )
                             ],
@@ -403,7 +404,9 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     } else {
-                                      return Center(child: const CircularProgressIndicator());
+                                      return Center(
+                                          child:
+                                              const CircularProgressIndicator());
                                     }
                                   },
                                 ),
@@ -493,7 +496,9 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     } else {
-                                      return Center(child: const CircularProgressIndicator());
+                                      return Center(
+                                          child:
+                                              const CircularProgressIndicator());
                                     }
                                   },
                                 ),

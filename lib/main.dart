@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
       routes: {
         HomePage.routesName: (context) => const HomePage(),
         AuthPage.routesName: (context) => const AuthPage(),
-        ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage(),
+        // ForgotPasswordPage.routesName: (context) => const ForgotPasswordPage(),
         Dashboard.routesName: (context) => const Dashboard(),
         AddLaporan.routesName: (context) => const AddLaporan(),
         LengkapiData.routesName: (context) => const LengkapiData(),

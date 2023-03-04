@@ -29,9 +29,10 @@ class _LengkapiDataState extends State<LengkapiData> {
   //                     'email': currentUser?.email,
   //                     'role': 'user',
   //                     'is_data_complete': false
-  var role = '';
-  var email = '';
-  var displayName = '';
+  String password = '';
+  String role = '';
+  String email = '';
+  String displayName = '';
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _LengkapiDataState extends State<LengkapiData> {
         .listen((userData) {
       if (mounted) {
         setState(() {
+          password = userData.data()!['password'];
           role = userData.data()!['role'];
           email = userData.data()!['email'];
           displayName = userData.data()!['fullname'];
@@ -72,6 +74,7 @@ class _LengkapiDataState extends State<LengkapiData> {
           .collection("users")
           .doc(currentUser?.uid)
           .set({
+        'password' : password,
         'email': email,
         'fullname': displayName,
         'nik': nik,
