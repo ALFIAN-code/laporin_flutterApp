@@ -30,8 +30,8 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
 
   void sentTanggapan(String? id) {
     String random = Random().nextInt(99999).toString();
-    DateTime date = DateTime(
-        now.day, now.month, now.year, now.hour, now.minute, now.second);
+     DateTime date = DateTime(
+        now.year, now.month, now.day, now.hour, now.minute, now.second);
     FirebaseFirestore.instance.collection('tanggapan').doc(id).set({
       'id_tanggapan': random,
       'id_laporan': id,
@@ -301,7 +301,7 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                                             height: 20,
                                           ),
                                           Text(
-                                            DateFormat('dd MMMM yyyy, kk:mm')
+                                            DateFormat('dd MMMM yyyy - kk:mm')
                                                 .format(tanggalTanggapan),
                                             style: regular15.copyWith(
                                                 letterSpacing: 0.3),
@@ -334,84 +334,89 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                         const SizedBox(
                           height: 20,
                         ),
-                        (status != 'selesai')
-                            ? Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  (userData.role == 'admin')
-                                      ? TextButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => Report(
-                                                    laporanData:
-                                                        snapshotLaporan.data,
-                                                    tanggapanData:
-                                                        tanggapanData,
-                                                    namaPetugas:
-                                                        userData.fullname,
-                                                  ),
-                                                ));
-                                          },
-                                          child: Text(
-                                            'make PDF',
-                                            style: semiBold15,
-                                          ))
-                                      : Container(
-                                          width: 90,
-                                        ),
-                                  Material(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(100)),
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (status == 'diproses') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: const Text('konfirmasi'),
-                                                content: const Text(
-                                                    'apakah laporan ini telah selesai dikerjakan '),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'tidak',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      laporanSelesai(laporanId);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'ya',
-                                                      style: TextStyle(
-                                                          color: Colors.blue),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        } else {
-                                          sentTanggapan(laporanId);
-                                        }
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            (userData.role == 'admin')
+                                ? Expanded(
+                                  child: TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Report(
+                                                laporanData: snapshotLaporan.data,
+                                                tanggapanData: tanggapanData,
+                                                namaPetugas: userData.fullname,
+                                              ),
+                                            ));
                                       },
-                                      child: CustomButton(status: status),
+                                      child: Text(
+                                        'make PDF',
+                                        style: semiBold15,
+                                      )),
+                                )
+                                : Container(
+                                    width: 90,
+                                  ),
+                            (status != 'selesai')
+                                ? Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 20),
+                                    child: SizedBox(
+                                      child: Material(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(100)),
+                                          child: InkWell(
+                                            onTap: () {
+                                              if (status == 'diproses') {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text('konfirmasi'),
+                                                      content: const Text(
+                                                          'apakah laporan ini telah selesai dikerjakan '),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: const Text(
+                                                            'tidak',
+                                                            style: TextStyle(
+                                                                color: Colors.red),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            laporanSelesai(laporanId);
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: const Text(
+                                                            'ya',
+                                                            style: TextStyle(
+                                                                color: Colors.blue),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              } else {
+                                                sentTanggapan(laporanId);
+                                              }
+                                            },
+                                            child: CustomButton(status: status),
+                                          ),
+                                        ),
                                     ),
                                   ),
-                                ],
-                              )
-                            : Container(),
+                                )
+                                : Expanded(child: Container()),
+                          ],
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -463,6 +468,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // 
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       decoration: BoxDecoration(
           color: (status == 'terkirim')

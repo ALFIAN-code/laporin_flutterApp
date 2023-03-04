@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -6,11 +7,26 @@ import 'package:intl/intl.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 
 import '../../component/laporan_componen.dart';
+import '../../model/user_model.dart';
 import 'detail_laporan_admin.dart';
 
-class LaporanSelesai extends StatelessWidget {
+class LaporanSelesai extends StatefulWidget {
   const LaporanSelesai({super.key});
   static String routesName = '/laporanSelesai';
+
+  @override
+  State<LaporanSelesai> createState() => _LaporanSelesaiState();
+}
+
+class _LaporanSelesaiState extends State<LaporanSelesai> {
+  final UserData userData = UserData();
+  var uid = FirebaseAuth.instance.currentUser?.uid;
+  
+  @override
+  void initState() {
+    userData.get(uid);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +92,13 @@ class LaporanSelesai extends StatelessWidget {
                         ]),
                     child: LaporanView(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, DetailLaporanAdmin.routeName,
-                              arguments: snapshot.data?.docs[index]
-                                  ['id_laporan']);
+                          Navigator.pushNamed(context,
+                                            DetailLaporanAdmin.routeName,
+                                            arguments: {
+                                              'userData': userData,
+                                              'laporanId': snapshot.data
+                                                  ?.docs[index]['id_laporan']
+                                            });
                         },
                         tanggal: DateFormat('kk:mm').format(timeStamp),
                         time: DateFormat('dd MMMM yyyy').format(timeStamp),

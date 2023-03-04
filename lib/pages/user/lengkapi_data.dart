@@ -194,13 +194,15 @@ class _LengkapiDataState extends State<LengkapiData> {
               const SizedBox(
                 height: 10,
               ),
-              MyTextField(
-                controller: _alamatController,
-                hint:
-                    'Dsn.Ngembul, Ds.Kesamben, kec.kesamben. kab.Jombang, jawa timur',
-                obsecureText: false,
-                textCapitalization: TextCapitalization.none,
-              ),
+              CustomTextField(hint:  'Dsn.Ngembul, Ds.Kesamben, kec.kesamben. kab.Jombang, jawa timur', maxLine: 3, minLine: 1, controller: _alamatController),
+              // MyTextField(
+              //   controller: _alamatController,
+              //   hint:
+              //      ,
+              //   obsecureText: false,
+                
+              //   textCapitalization: TextCapitalization.none,
+              // ),
               const SizedBox(
                 height: 30,
               ),

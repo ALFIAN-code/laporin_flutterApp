@@ -24,6 +24,8 @@ class _AddPetugasState extends State<AddPetugas> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _telpController = TextEditingController();
+  bool hidePassword = true;
+
 
   @override
   void dispose() {
@@ -58,7 +60,8 @@ class _AddPetugasState extends State<AddPetugas> {
           'password': _passwordController.text,
           'telp': _telpController.text,
           'uid': user.uid,
-          'role': 'petugas'
+          'role': 'petugas',
+          'is_data_complete' : true
         });
 
         if (mounted) {
@@ -189,8 +192,13 @@ class _AddPetugasState extends State<AddPetugas> {
             MyTextField(
                 controller: _passwordController,
                 hint: '**********',
-                obsecureText: true,
-                textCapitalization: TextCapitalization.words),
+                obsecureText: hidePassword,
+                suffix: IconButton(onPressed: (){
+                  setState(() {
+                    hidePassword = !hidePassword;
+                  });
+                }, icon: Icon(hidePassword?Icons.visibility_rounded:Icons.visibility_off), color: Colors.grey,),
+                textCapitalization: TextCapitalization.words, ),
             const SizedBox(
               height: 30,
             ),

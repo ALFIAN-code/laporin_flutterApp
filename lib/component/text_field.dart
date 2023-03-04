@@ -43,6 +43,7 @@ class MyTextField extends StatelessWidget {
             obscureText: obsecureText,
             onChanged: (value) {},
             maxLines: 1,
+            minLines: 1,
             keyboardType: keyboardType,
             inputFormatters: inputFormater,
             textCapitalization: textCapitalization,
