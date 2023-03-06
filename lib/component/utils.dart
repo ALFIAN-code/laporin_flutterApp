@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:lapor_in/auth_page.dart';
 
 import '../Services/auth_service.dart';
 
@@ -34,10 +35,11 @@ class Utils {
   static void userSignOut(BuildContext context) {
     AuthService().googleLogout();
     FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, AuthPage.routesName);
   }
 
   static Future<User?> createUser(String email, String password) async {
-     FirebaseApp app = await Firebase.initializeApp(
+    FirebaseApp app = await Firebase.initializeApp(
         name: 'Secondary', options: Firebase.app().options);
 
     try {
