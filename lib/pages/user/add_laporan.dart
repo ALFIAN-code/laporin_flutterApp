@@ -267,7 +267,8 @@ class _AddLaporanState extends State<AddLaporan> {
 
   void uploadImage() async {
     getUserData();
-    if (pickedImage == null) return;
+    if (pickedImage == null)
+      return Utils.showSnackBar('pilih gambar terlebih dahulu');
     Reference refrenceRoot = FirebaseStorage.instance.ref();
     Reference refrenceDirImage =
         refrenceRoot.child('laporan/${currentUser!.email}');
