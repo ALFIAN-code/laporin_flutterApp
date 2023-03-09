@@ -43,6 +43,16 @@ class _ReportState extends State<Report> {
   String isiTanggapan = '';
   DateTime tanggalTanggapan = DateTime.now();
 
+  void getTanggapanData() {
+    if (status != 'terkirim') {
+      idTanggapan = widget.tanggapanData!['id_tanggapan'];
+      idPetugas = widget.tanggapanData!['id_petugas'];
+      isiTanggapan = widget.tanggapanData!['isi_tanggapan'];
+      tanggalTanggapan =
+          (widget.tanggapanData!['tanggal_tanggapan'] as Timestamp).toDate();
+    }
+  }
+
   @override
   void initState() {
     //get laporan data
@@ -59,11 +69,7 @@ class _ReportState extends State<Report> {
     status = widget.laporanData!['status'];
 
     //get tanggapan data
-    idTanggapan = widget.tanggapanData!['id_tanggapan'];
-    idPetugas = widget.tanggapanData!['id_petugas'];
-    isiTanggapan = widget.tanggapanData!['isi_tanggapan'];
-    tanggalTanggapan =
-        (widget.tanggapanData!['tanggal_tanggapan'] as Timestamp).toDate();
+    getTanggapanData();
 
     super.initState();
   }
