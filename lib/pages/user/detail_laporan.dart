@@ -23,6 +23,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
 
   @override
   Widget build(BuildContext context) {
+    var bodyWidth = MediaQuery.of(context).size.width;
     var bodyHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     var laporanId = ModalRoute.of(context)?.settings.arguments;
@@ -303,8 +304,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                 })
                             : Center(
                                 child: Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 20),
+                                  width: bodyWidth * 0.9,
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 30),
                                   decoration: BoxDecoration(
@@ -315,7 +315,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     children: [
                                       Text(
                                         'Belum Ada Tangggapan',
-                                        style: semiBold15,
+                                        style: semiBold17,
                                       ),
                                       SizedBox(
                                         height: 10,
@@ -329,7 +329,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                 ),
                               ),
                         const SizedBox(
-                          height: 20,
+                          height: 30,
                         )
                       ],
                     ),
