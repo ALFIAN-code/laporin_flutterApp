@@ -5,6 +5,8 @@ import 'package:lapor_in/pages/theme/style.dart';
 import 'package:intl/intl.dart';
 import 'package:lapor_in/pages/user/edit_page.dart';
 
+import '../fullscreen_image.dart';
+
 class DetailLaporan extends StatefulWidget {
   const DetailLaporan({super.key});
 
@@ -333,24 +335,53 @@ class _DetailLaporanState extends State<DetailLaporan> {
                     ),
                   ),
                   Align(
-                      alignment: Alignment.topLeft,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 20, left: 20),
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[300]?.withAlpha(100),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10))),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            // weight: 300,
+                      alignment: Alignment.topCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 20, left: 20),
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[300]?.withAlpha(200),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              child: const Icon(
+                                Icons.arrow_back,
+                                // weight: 300,
 
-                            color: Colors.white,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
+                          GestureDetector(
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              FullscreenImage.routeName,
+                              arguments: snapshot.data!.get('url_image'),
+                            ),
+                            child: Container(
+                              // padding: EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(top: 20, right: 20),
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[300]?.withAlpha(200),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              child: Center(
+                                child: Icon(
+                                  Icons.fullscreen,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ))
                 ],
               );
