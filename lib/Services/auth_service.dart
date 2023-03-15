@@ -38,9 +38,7 @@ class AuthService extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
       // ignore: use_build_context_synchronously
       errorDialog(
           title: e.code, content: e.message.toString(), context: context);
