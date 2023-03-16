@@ -356,16 +356,34 @@ class _HomePageState extends State<HomePage> {
                                                                 59,
                                                                 49),
                                                         onPressed: (context) {
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'laporan')
-                                                              .doc(snapshot
-                                                                      .requireData
-                                                                      .docs[index]
-                                                                  [
-                                                                  'id_laporan'])
-                                                              .delete();
+                                                          if (snapshot.requireData
+                                                                          .docs[
+                                                                      index]
+                                                                  ['status'] ==
+                                                              'terkirim') {
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'laporan')
+                                                                .doc(snapshot
+                                                                        .requireData
+                                                                        .docs[index]
+                                                                    [
+                                                                    'id_laporan'])
+                                                                .delete();
+                                                          } else {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) =>
+                                                                      AlertDialog(
+                                                                title: Text(
+                                                                    'Upssss'),
+                                                                content: Text(
+                                                                    'laporan yang sudah di tanggapi tidak bisa di hapus'),
+                                                              ),
+                                                            );
+                                                          }
                                                         },
                                                       )
                                                     ]),

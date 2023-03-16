@@ -59,11 +59,14 @@ class _AddLaporanState extends State<AddLaporan> {
         appBar: appbar,
         body: SingleChildScrollView(
             child: Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: EdgeInsets.only(
+            top: 10,
+          ),
           padding: EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(30), bottom: Radius.circular(30))),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -72,7 +75,7 @@ class _AddLaporanState extends State<AddLaporan> {
                 GestureDetector(
                   onTap: _getImage,
                   child: Container(
-                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: (pickedImage != null)
                         ? Image.file(
                             File(pickedImage!.path),
@@ -103,44 +106,9 @@ class _AddLaporanState extends State<AddLaporan> {
                           ),
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('upload gambar ini?'),
-                            content: const Text(
-                                'gambar yang sudah diupload tidak bisa dirubah kembali'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'tidak',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  uploadImage();
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'ya',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const Text('upload')),
 
                 const SizedBox(
-                  height: 10,
+                  height: 50,
                 ),
 
                 //nik Field
@@ -230,7 +198,7 @@ class _AddLaporanState extends State<AddLaporan> {
                       style: medium15.copyWith(color: Colors.white),
                     )),
                 const SizedBox(
-                  height: 30,
+                  height: 50,
                 ),
               ],
             ),
@@ -241,10 +209,61 @@ class _AddLaporanState extends State<AddLaporan> {
   }
 
   Future<void> _getImage() async {
-    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      pickedImage = image;
-    });
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              XFile? image =
+                  await imagePicker.pickImage(source: ImageSource.camera);
+              setState(() {
+                pickedImage = image;
+              });
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple[300],
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+              ),
+              child: Center(
+                child: Text(
+                  'Camera',
+                  style: semiBold17.copyWith(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () async {
+              XFile? image =
+                  await imagePicker.pickImage(source: ImageSource.gallery);
+              setState(() {
+                pickedImage = image;
+              });
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(width: 2, color: Colors.grey.shade800)),
+              child: Center(
+                child: Text(
+                  'Galery',
+                  style: semiBold17.copyWith(color: Colors.grey[800]),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
     // print('lokasi gambar : ${pickedImage!.path}');
     // print('nama gambar : ${pickedImage!.name}');
   }
@@ -284,21 +303,17 @@ class _AddLaporanState extends State<AddLaporan> {
     }
   }
 
-  Future<void> uploadLaporan() async {
+  void uploadLaporan() async {
     DateTime date = DateTime(
         now.year, now.month, now.day, now.hour, now.minute, now.second);
-    if (imageUrl.isEmpty) {
-      Utils.showSnackBar('upload gambar terlebih dahulu');
-    } else if (_judulController.text.isEmpty ||
+    uploadImage();
+    if (_judulController.text.isEmpty ||
         _alamatController.text.isEmpty ||
         _deskripsiController.text.isEmpty) {
       Utils.showSnackBar('field tidak boleh kosong');
     } else {
       try {
-        await FirebaseFirestore.instance
-            .collection('laporan')
-            .doc(laporanId)
-            .set({
+        FirebaseFirestore.instance.collection('laporan').doc(laporanId).set({
           'url_image': imageUrl,
           'nama_pelapor': fullname,
           'id_pelapor': currentUser!.uid,

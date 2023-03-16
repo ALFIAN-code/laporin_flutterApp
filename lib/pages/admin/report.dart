@@ -34,10 +34,11 @@ class _ReportState extends State<Report> {
   DateTime tanggal = DateTime.now();
   String judul = '';
   String isiLaporan = '';
-  String urlImage = '';
+  String urlImageLaporan = '';
   String status = '';
 
   //tanggapan data
+  String urlImageTanggapan = '';
   String idTanggapan = '';
   String idPetugas = '';
   String isiTanggapan = '';
@@ -50,13 +51,14 @@ class _ReportState extends State<Report> {
       isiTanggapan = widget.tanggapanData!['isi_tanggapan'];
       tanggalTanggapan =
           (widget.tanggapanData!['tanggal_tanggapan'] as Timestamp).toDate();
+      urlImageTanggapan = widget.tanggapanData!['url_image'];
     }
   }
 
   @override
   void initState() {
     //get laporan data
-    urlImage = widget.laporanData!['url_image'];
+    urlImageLaporan = widget.laporanData!['url_image'];
     namaPelapor = widget.laporanData!['nama_pelapor'];
     idPelapor = widget.laporanData!['id_pelapor'];
     idLaporan = widget.laporanData!['id_laporan'];
@@ -90,7 +92,8 @@ class _ReportState extends State<Report> {
     final font2 = await PdfGoogleFonts.openSansBold();
     var _textStyle = pw.TextStyle(font: font1, fontSize: 15);
 
-    final netImage = await networkImage(urlImage);
+    final netImageLaporan = await networkImage(urlImageLaporan);
+    final netImageTanggapan = await networkImage(urlImageTanggapan);
 
     doc.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
@@ -106,7 +109,7 @@ class _ReportState extends State<Report> {
           pw.SizedBox(height: 20),
           pw.Text('Laporan', style: pw.TextStyle(font: font2, fontSize: 20)),
           pw.SizedBox(height: 10),
-          pw.Image(netImage, height: 100),
+          pw.Image(netImageLaporan, height: 300),
           pw.SizedBox(height: 10),
           pw.Text('id laporan : $idLaporan', style: _textStyle),
           pw.SizedBox(height: 10),
@@ -131,7 +134,7 @@ class _ReportState extends State<Report> {
           pw.NewPage(),
 
           //second page
-          (status != 'terkirim')
+          (status == 'selesai')
               ? pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -146,6 +149,7 @@ class _ReportState extends State<Report> {
                             horizontal: 30, vertical: 10),
                         decoration:
                             pw.BoxDecoration(color: PdfColors.deepOrange)),
+                    pw.Image(netImageTanggapan, height: 300),
                     pw.SizedBox(height: 20),
                     pw.Text('Tanggapan',
                         style: pw.TextStyle(font: font2, fontSize: 20)),

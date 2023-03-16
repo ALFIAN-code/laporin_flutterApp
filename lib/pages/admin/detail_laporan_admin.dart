@@ -1,14 +1,18 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lapor_in/model/user_model.dart';
 import 'package:lapor_in/pages/admin/report.dart';
 import 'package:lapor_in/pages/fullscreen_image.dart';
 import 'package:lapor_in/pages/theme/style.dart';
 import 'package:intl/intl.dart';
 
+import '../../component/utils.dart';
 import '../user/add_laporan.dart';
 
 class DetailLaporanAdmin extends StatefulWidget {
@@ -25,37 +29,82 @@ class DetailLaporanAdmin extends StatefulWidget {
 class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
   TextEditingController _tanggapanController = TextEditingController();
 
+  XFile? pickedImage;
+  ImagePicker imagePicker = ImagePicker();
+
+  String imageUrl = '';
+  String uniqueCode = DateTime.now().microsecondsSinceEpoch.toString();
+
   DateTime now = DateTime.now();
   User? currentUser = FirebaseAuth.instance.currentUser;
 
-  void sentTanggapan(String? id) {
-    String random = Random().nextInt(99999).toString();
-     DateTime date = DateTime(
-        now.year, now.month, now.day, now.hour, now.minute, now.second);
-    FirebaseFirestore.instance.collection('tanggapan').doc(id).set({
-      'id_tanggapan': random,
-      'id_laporan': id,
-      'tanggal_tanggapan': date,
-      'isi_tanggapan': _tanggapanController.text,
-      'id_petugas': currentUser!.uid,
-      // 'nama_petugas' : currentUser!.displayName
-    });
+  Future uploadImage() async {
+    if (pickedImage == null)
+      return Utils.showSnackBar('pilih gambar terlebih dahulu');
+    Reference refrenceRoot = FirebaseStorage.instance.ref();
+    Reference refrenceDirImage =
+        refrenceRoot.child('laporan/${currentUser!.email}');
 
-    FirebaseFirestore.instance
+    Reference refrengeImageToUpload = refrenceDirImage.child(uniqueCode);
+    try {
+      await refrengeImageToUpload.putFile(File(pickedImage!.path));
+      imageUrl = await refrengeImageToUpload.getDownloadURL();
+
+      print('ini adalah link download : $imageUrl');
+    } catch (e) {
+      Utils.showSnackBar(e.toString());
+    }
+    return true;
+  }
+
+  Future<void> sentTanggapan(String? id) async {
+    String random = Random().nextInt(99999).toString();
+    DateTime date = DateTime(
+        now.year, now.month, now.day, now.hour, now.minute, now.second);
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: RefreshProgressIndicator(
+              color: Color(0xff8CCD00),
+            ),
+          );
+        });
+    await uploadImage();
+    if (pickedImage == null) {
+      Utils.showSnackBar('pilih gambar');
+    } else if (_tanggapanController.text.isEmpty) {
+      Utils.showSnackBar('isi tanggapan terlebih dahulu');
+    } else {
+      FirebaseFirestore.instance.collection('tanggapan').doc(id).set({
+        'id_tanggapan': random,
+        'id_laporan': id,
+        'tanggal_tanggapan': date,
+        'isi_tanggapan': _tanggapanController.text,
+        'id_petugas': currentUser!.uid,
+        'url_image': imageUrl
+        // 'nama_petugas' : currentUser!.displayName
+      });
+
+      FirebaseFirestore.instance
+          .collection('laporan')
+          .doc(id)
+          .update({'status': 'selesai'});
+
+      Navigator.pop(context);
+    }
+  }
+
+  void laporanDiproses(String? id) async {
+    await FirebaseFirestore.instance
         .collection('laporan')
         .doc(id)
         .update({'status': 'diproses'});
   }
 
-  void laporanSelesai(String? id) {
-    FirebaseFirestore.instance
-        .collection('laporan')
-        .doc(id)
-        .update({'status': 'selesai'});
-  }
-
   @override
   Widget build(BuildContext context) {
+    var bodyWidth = MediaQuery.of(context).size.width;
     var bodyHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
@@ -88,6 +137,7 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                     height: bodyHeight * 0.4,
                     child: Image.network(
                       snapshotLaporan.data!.get('url_image'),
+                      width: bodyWidth,
                       fit: BoxFit.cover,
                       height: double.infinity,
                     ),
@@ -201,14 +251,73 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                             ],
                           ),
                         ),
-                        (status == 'terkirim')
-                            ? CustomTextField(
-                                controller: _tanggapanController,
-                                hint: 'tanggapi laporan disini',
-                                maxLine: 100,
-                                minLine: 10,
+                        (status == 'diproses')
+                            ? Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: Divider(
+                                      thickness: 5,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: _getImage,
+                                    child: Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          20, 20, 20, 0),
+                                      child: (pickedImage != null)
+                                          ? Image.file(
+                                              File(pickedImage!.path),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.35,
+                                            )
+                                          : Container(
+                                              height: bodyHeight * 0.35,
+                                              decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                      255, 241, 241, 241),
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(30))),
+                                              child: Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    const Icon(
+                                                        Icons.camera_alt),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      'select image',
+                                                      style: medium15,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  CustomTextField(
+                                    controller: _tanggapanController,
+                                    hint: 'tanggapi laporan disini',
+                                    maxLine: 100,
+                                    minLine: 10,
+                                  ),
+                                ],
                               )
-                            : StreamBuilder(
+                            : Container(),
+                        (status == 'selesai')
+                            ? StreamBuilder(
                                 stream: FirebaseFirestore.instance
                                     .collection('tanggapan')
                                     .doc(laporanId)
@@ -237,6 +346,68 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Center(
+                                            child: Container(
+                                              height: bodyHeight * 0.4,
+                                              width: bodyWidth * 0.8,
+                                              child: Stack(children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Image.network(
+                                                    snapshotTanggapan.data!
+                                                        .get('url_image'),
+                                                    fit: BoxFit.fitWidth,
+                                                    width: double.maxFinite,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: bodyWidth * 0.05),
+                                                  child: GestureDetector(
+                                                    onTap: () =>
+                                                        Navigator.pushNamed(
+                                                      context,
+                                                      FullscreenImage.routeName,
+                                                      arguments:
+                                                          snapshotTanggapan
+                                                              .data!
+                                                              .get('url_image'),
+                                                    ),
+                                                    child: Container(
+                                                      // padding: EdgeInsets.all(10),
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              right: 20),
+                                                      height: 50,
+                                                      width: 50,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors
+                                                              .grey[800]
+                                                              ?.withAlpha(200),
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.fullscreen,
+                                                          color: Colors.white,
+                                                          size: 40,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 30,
+                                          ),
                                           Text(
                                             'Tanggapan',
                                             style: bold25.copyWith(
@@ -301,7 +472,8 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                                       child: Text('loading'),
                                     );
                                   }
-                                }),
+                                })
+                            : Container(),
                         const SizedBox(
                           height: 20,
                         ),
@@ -311,80 +483,91 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                           children: [
                             (userData.role == 'admin')
                                 ? Expanded(
-                                  child: TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => Report(
-                                                laporanData: snapshotLaporan.data,
-                                                tanggapanData: tanggapanData,
-                                                namaPetugas: userData.fullname,
-                                              ),
-                                            ));
-                                      },
-                                      child: Text(
-                                        'make PDF',
-                                        style: semiBold15,
-                                      )),
-                                )
-                                : Container(
-                                    width: 90,
+                                    child: TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => Report(
+                                                  laporanData:
+                                                      snapshotLaporan.data,
+                                                  tanggapanData: tanggapanData,
+                                                  namaPetugas:
+                                                      userData.fullname,
+                                                ),
+                                              ));
+                                        },
+                                        child: Text(
+                                          'make PDF',
+                                          style: semiBold15,
+                                        )),
+                                  )
+                                : Expanded(
+                                    child: Container(),
                                   ),
                             (status != 'selesai')
-                                ? Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 20),
-                                    child: SizedBox(
-                                      child: Material(
+                                ? SizedBox(
+                                    width: 200,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      child: SizedBox(
+                                        child: Material(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(100)),
                                           child: InkWell(
                                             onTap: () {
-                                              if (status == 'diproses') {
+                                              if (status == 'terkirim') {
+                                                laporanDiproses(laporanId);
+                                              } else {
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) {
                                                     return AlertDialog(
-                                                      title: const Text('konfirmasi'),
+                                                      title: const Text(
+                                                          'konfirmasi'),
                                                       content: const Text(
                                                           'apakah laporan ini telah selesai dikerjakan '),
                                                       actions: [
                                                         TextButton(
                                                           onPressed: () {
-                                                            Navigator.pop(context);
+                                                            Navigator.pop(
+                                                                context);
                                                           },
                                                           child: const Text(
                                                             'tidak',
                                                             style: TextStyle(
-                                                                color: Colors.red),
+                                                                color:
+                                                                    Colors.red),
                                                           ),
                                                         ),
                                                         TextButton(
                                                           onPressed: () {
-                                                            laporanSelesai(laporanId);
-                                                            Navigator.pop(context);
+                                                            setState(() {
+                                                              sentTanggapan(
+                                                                  laporanId);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
                                                           },
                                                           child: const Text(
                                                             'ya',
                                                             style: TextStyle(
-                                                                color: Colors.blue),
+                                                                color: Colors
+                                                                    .blue),
                                                           ),
                                                         ),
                                                       ],
                                                     );
                                                   },
                                                 );
-                                              } else {
-                                                sentTanggapan(laporanId);
                                               }
                                             },
                                             child: CustomButton(status: status),
                                           ),
                                         ),
+                                      ),
                                     ),
-                                  ),
-                                )
+                                  )
                                 : Expanded(child: Container()),
                           ],
                         ),
@@ -406,9 +589,9 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                               height: 50,
                               width: 50,
                               decoration: BoxDecoration(
-                                  color: Colors.grey[300]?.withAlpha(100),
-                                  borderRadius:
-                                      const BorderRadius.all(Radius.circular(10))),
+                                  color: Colors.grey[800]?.withAlpha(200),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
                               child: const Icon(
                                 Icons.arrow_back,
                                 // weight: 300,
@@ -417,30 +600,30 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
                               ),
                             ),
                           ),
-                           GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            FullscreenImage.routeName,
-                            arguments: snapshotLaporan.data!.get('url_image'),
-                          ),
-                          child: Container(
-                            // padding: EdgeInsets.all(10),
-                            margin: const EdgeInsets.only(top: 20, right: 20),
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300]?.withAlpha(200),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: Center(
-                              child: Icon(
-                                Icons.fullscreen,
-                                color: Colors.white,
-                                size: 40,
+                          GestureDetector(
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              FullscreenImage.routeName,
+                              arguments: snapshotLaporan.data!.get('url_image'),
+                            ),
+                            child: Container(
+                              // padding: EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(top: 20, right: 20),
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[800]?.withAlpha(200),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              child: Center(
+                                child: Icon(
+                                  Icons.fullscreen,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
                               ),
                             ),
                           ),
-                        ),
                         ],
                       ))
                 ],
@@ -455,6 +638,66 @@ class _DetailLaporanAdminState extends State<DetailLaporanAdmin> {
       ),
     );
   }
+
+  void _getImage() async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              XFile? image =
+                  await imagePicker.pickImage(source: ImageSource.camera);
+              setState(() {
+                pickedImage = image;
+              });
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple[300],
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+              ),
+              child: Center(
+                child: Text(
+                  'Camera',
+                  style: semiBold17.copyWith(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () async {
+              XFile? image =
+                  await imagePicker.pickImage(source: ImageSource.gallery);
+              setState(() {
+                pickedImage = image;
+              });
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(width: 2, color: Colors.grey.shade800)),
+              child: Center(
+                child: Text(
+                  'Galery',
+                  style: semiBold17.copyWith(color: Colors.grey[800]),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    // print('lokasi gambar : ${pickedImage!.path}');
+    // print('nama gambar : ${pickedImage!.name}');
+  }
 }
 
 class CustomButton extends StatelessWidget {
@@ -468,7 +711,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // 
+      //
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       decoration: BoxDecoration(
           color: (status == 'terkirim')
@@ -479,7 +722,7 @@ class CustomButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            (status == 'terkirim') ? 'tanggapi' : 'selesai',
+            (status != 'terkirim') ? 'tanggapi' : 'Proses',
             style: medium15.copyWith(color: Colors.white),
           ),
           const SizedBox(

@@ -50,9 +50,12 @@ class _DetailLaporanState extends State<DetailLaporan> {
                 children: [
                   SizedBox(
                     height: bodyHeight * 0.4,
-                    child: Image.network(
-                      snapshot.data!.get('url_image'),
-                      fit: BoxFit.cover,
+                    child: Center(
+                      child: Image.network(
+                        snapshot.data!.get('url_image'),
+                        width: bodyWidth,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   Container(
@@ -236,6 +239,68 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Center(
+                                            child: Container(
+                                              height: bodyHeight * 0.4,
+                                              width: bodyWidth * 0.8,
+                                              child: Stack(children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Image.network(
+                                                    snapshotTanggapan.data!
+                                                        .get('url_image'),
+                                                    fit: BoxFit.fitWidth,
+                                                    width: double.maxFinite,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: bodyWidth * 0.05),
+                                                  child: GestureDetector(
+                                                    onTap: () =>
+                                                        Navigator.pushNamed(
+                                                      context,
+                                                      FullscreenImage.routeName,
+                                                      arguments:
+                                                          snapshotTanggapan
+                                                              .data!
+                                                              .get('url_image'),
+                                                    ),
+                                                    child: Container(
+                                                      // padding: EdgeInsets.all(10),
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              right: 20),
+                                                      height: 50,
+                                                      width: 50,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors
+                                                              .grey[800]
+                                                              ?.withAlpha(200),
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.fullscreen,
+                                                          color: Colors.white,
+                                                          size: 40,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 30,
+                                          ),
                                           Text(
                                             'Tanggapan',
                                             style: bold25.copyWith(
@@ -346,7 +411,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               height: 50,
                               width: 50,
                               decoration: BoxDecoration(
-                                  color: Colors.grey[300]?.withAlpha(200),
+                                  color: Colors.grey[800]?.withAlpha(200),
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(10))),
                               child: const Icon(
@@ -369,7 +434,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               height: 50,
                               width: 50,
                               decoration: BoxDecoration(
-                                  color: Colors.grey[300]?.withAlpha(200),
+                                  color: Colors.grey[800]!.withAlpha(200),
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(10))),
                               child: Center(
