@@ -16,6 +16,8 @@ di dalam aplikasi ini terdapat 3 role, yaitu :
   petugas tidak dapat membuat akun, hanya admin yang bisa menambahkan akun petugas
 
 - admin : 
-  tugas admin mirip dengan petugas, tetapi mempunyai ke istimewaan yaitu bisa menambahkan akun petugas ke aplikasi, 
+  tugas admin mirip dengan petugas, tetapi mempunyai ke istimewaan yaitu bisa menambahkan akun petugas ke aplikasi,
+
+### aplikasi ini sudah tidak di maintenance
 
 
