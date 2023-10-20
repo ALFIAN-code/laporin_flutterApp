@@ -8,14 +8,14 @@ di dalam aplikasi ini terdapat 2 role, yaitu :
 - admin
 
 ## role
-- user
+- user :
   bisa melaporkan masalah ke dalam aplikasi
 
-- petugas
+- petugas : 
   menindaklanjuti masalah yang di laporkan di aplikasi tersebut
   petugas tidak dapat membuat akun, hanya admin yang bisa menambahkan akun petugas
 
-- admin
+- admin : 
   tugas admin mirip dengan petugas, tetapi mempunyai ke istimewaan yaitu bisa menambahkan akun petugas ke aplikasi, 
 
 
