@@ -1,16 +1,20 @@
 # lapor_in
 
-A new Flutter project.
+laporan in adalah sebuah aplikasi laporan masyarakat, dimana user bisa melaporkan masalah tertentu seperti kecelakaan, kebakaraan, pencurian,dan lain-lain, 
 
-## Getting Started
+di dalam aplikasi ini terdapat 2 role, yaitu :
+- user
+- petugas
+- admin
 
-This project is a starting point for a Flutter application.
+- user
+  bisa melaporkan masalah ke dalam aplikasi
 
-A few resources to get you started if this is your first Flutter project:
+- petugas
+  menindaklanjuti masalah yang di laporkan di aplikasi tersebut
+  petugas tidak dapat membuat akun, hanya admin yang bisa menambahkan akun petugas
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- admin
+  tugas admin mirip dengan petugas, tetapi mempunyai ke istimewaan yaitu bisa menambahkan akun petugas ke aplikasi, 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
