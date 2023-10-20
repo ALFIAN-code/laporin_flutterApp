@@ -2,7 +2,7 @@
 
 laporan in adalah sebuah aplikasi laporan masyarakat, dimana user bisa melaporkan masalah tertentu seperti kecelakaan, kebakaraan, pencurian,dan lain-lain, 
 
-di dalam aplikasi ini terdapat 2 role, yaitu :
+di dalam aplikasi ini terdapat 3 role, yaitu :
 - user
 - petugas
 - admin
