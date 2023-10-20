@@ -7,6 +7,7 @@ di dalam aplikasi ini terdapat 2 role, yaitu :
 - petugas
 - admin
 
+## role
 - user
   bisa melaporkan masalah ke dalam aplikasi
 
