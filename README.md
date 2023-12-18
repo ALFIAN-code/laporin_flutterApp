@@ -23,7 +23,7 @@ di dalam aplikasi ini terdapat 3 role, yaitu :
 ![Buat Laporan-1](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/892217a7-b957-4ffa-9b4f-b4398d836c15)
 
 ### tampilan role petugas <br>
-![Buat Laporan-2](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/28704b8e-de27-4736-a633-2b37e928fed6)
+![Buat Laporan](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/19937b91-cf0f-49f8-9261-6f6d3456362d)
 
 ### tampilan role user <br>
 ![Buat Laporan](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/6603181a-9bde-4d54-89f9-b61952d6000f)
