@@ -29,8 +29,8 @@ di dalam aplikasi ini terdapat 3 role, yaitu :
 ### tampilan role user <br>
 ![Buat Laporan](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/6603181a-9bde-4d54-89f9-b61952d6000f)
 
-###tampilan sign in & register <br>
-![iPhone 14 - 1](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/03150b53-a136-415c-b84c-2097243fec4a)
+### tampilan sign in & register <br>
+![iPhone 14 - 1](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/03150b53-a136-415c-b84c-2097243fec4a) <br>
 ![iPhone 14 - 2](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/09fe8346-5e4b-4e73-8d97-d7ac78f0d4db)
 
 
