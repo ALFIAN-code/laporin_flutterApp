@@ -20,7 +20,8 @@ di dalam aplikasi ini terdapat 3 role, yaitu :
   tugas admin mirip dengan petugas, tetapi mempunyai ke istimewaan yaitu bisa menambahkan akun petugas ke aplikasi,
 
 ### tampilan role admin <br>
-![Buat Laporan-1](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/892217a7-b957-4ffa-9b4f-b4398d836c15)
+![Buat Laporan-2](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/286dc78f-7c2c-454a-a89f-f83515c74e29)
+
 
 ### tampilan role petugas <br>
 ![Buat Laporan](https://github.com/ALFIAN-code/laporin_flutterApp/assets/82469267/19937b91-cf0f-49f8-9261-6f6d3456362d)
